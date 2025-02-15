@@ -18,15 +18,18 @@ public:
     void onClosed();
     void onKeyPressed(sf::Event::KeyPressed const& keyPressed);
     void onMouseMoved(sf::Event::MouseMoved const& mouseMove);
+    void onMouseButtonPressed(sf::Event::MouseButtonPressed const& mouseButton);
     void onMouseWheelScrolled(sf::Event::MouseWheelScrolled const& mouseScroll);
 
-    static constexpr size_t tileDepth = 6u;
+    static constexpr size_t tileDepth = 7u;
 
 private:
     Game();
     ~Game();
 
     Board board;
+    sf::Vector2f mouseClickPosition;
+    bool mouseDragging = false;
 };
 
 #endif

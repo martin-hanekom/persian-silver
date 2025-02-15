@@ -6,13 +6,29 @@
 class Screen
 {
 public:
+    Screen(Screen const&) = delete;
+    Screen(Screen&&) = delete;
+    Screen& operator=(Screen const&) = delete;
+    Screen& operator=(Screen&&) = delete;
+
+    static Screen& get();
     static sf::RenderWindow& getWindow();
     static sf::Font& getFont();
-    static void init();
     static void draw(sf::Drawable const& drawable);
 
+    void zoom(float factor);
+    void pan(sf::Vector2f offset);
+    sf::Vector2f mapPixelToCoords(sf::Vector2i pixels) const;
+
 private:
-    static constexpr sf::Vector2f windowSize = {1920.f, 1080.f};
+    Screen();
+    ~Screen();
+
+    static constexpr sf::Vector2u windowSize{1920u, 1080u};
+    static constexpr char const* title{"Persian Silver"};
+
+    sf::RenderWindow window{sf::VideoMode(windowSize), "Persian Silver", sf::State::Fullscreen};
+    sf::Vector2f viewCenter{0.f, 0.f};
 };
 
 #endif

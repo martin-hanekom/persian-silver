@@ -17,7 +17,6 @@ Game& Game::get()
 
 void Game::run()
 {
-    Screen::init();
     auto& window = Screen::getWindow();
 
     while (window.isOpen())
@@ -25,6 +24,7 @@ void Game::run()
         window.handleEvents(
             [this](sf::Event::Closed const&) { onClosed(); },
             [this](sf::Event::KeyPressed const& keyPressed) { onKeyPressed(keyPressed); },
+            [this](sf::Event::MouseButtonPressed const& mouseButton) { onMouseButtonPressed(mouseButton); },
             [this](sf::Event::MouseMoved const& mouseMove) { onMouseMoved(mouseMove); },
             [this](sf::Event::MouseWheelScrolled const& mouseScroll) { onMouseWheelScrolled(mouseScroll); }
         );
@@ -54,9 +54,37 @@ void Game::onKeyPressed(sf::Event::KeyPressed const& keyPressed)
 
 void Game::onMouseMoved(sf::Event::MouseMoved const& mouseMove)
 {
-    auto& window = Screen::getWindow();
-    auto mousePosition = window.mapPixelToCoords(mouseMove.position);
-    board.onMouseMoved(mousePosition);
+    auto& screen = Screen::get();
+    auto mousePosition = screen.mapPixelToCoords(mouseMove.position);
+
+    if (mouseDragging && sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+    {
+        screen.pan(mouseClickPosition - mousePosition);
+    }
+    else
+    {
+        mouseDragging = false;
+        board.onMouseMoved(mousePosition);
+    }
+}
+
+void Game::onMouseButtonPressed(sf::Event::MouseButtonPressed const& mouseButton)
+{
+    auto& screen = Screen::get();
+    mouseClickPosition = screen.mapPixelToCoords(mouseButton.position);
+    mouseDragging = true;
+
+    switch (mouseButton.button)
+    {
+        case sf::Mouse::Button::Left:
+            board.onLeftClick();
+            break;
+        case sf::Mouse::Button::Right:
+            board.onRightClick();
+            break;
+        default:
+            break;
+    }
 }
 
 void Game::onMouseWheelScrolled(sf::Event::MouseWheelScrolled const& mouseScroll)
@@ -64,26 +92,6 @@ void Game::onMouseWheelScrolled(sf::Event::MouseWheelScrolled const& mouseScroll
     auto& window = Screen::getWindow();
     if (mouseScroll.wheel == sf::Mouse::Wheel::Vertical)
     {
-        auto const zoomFactor = 1.1f;
-        auto view = window.getView();
-        if (mouseScroll.delta > 0)
-        {
-            view.zoom(1.f / zoomFactor);
-        }
-        else if (mouseScroll.delta < 0)
-        {
-            view.zoom(zoomFactor);
-        }
-        window.setView(view);
+        Screen::get().zoom(1.f - mouseScroll.delta * 0.1f);
     }
-    /*
-    auto mousePosition = window.mapPixelToCoords({mouseScroll.x, mouseScroll.y});
-    for (auto& tile : board.tiles)
-    {
-        if (tile.shape.getGlobalBounds().contains(mousePosition))
-        {
-            tile.onHover();
-        }
-    }
-        */
 }
