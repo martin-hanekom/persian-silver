@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <iostream>
 #include <cmath>
 #include <deque>
 #include "board.hpp"
@@ -41,37 +42,64 @@ void Board::draw() const
 
 void Board::onMouseMoved(sf::Vector2f mousePosition)
 {
-    if (auto hovering = findHovering(); nullptr != hovering)
+    if (hovering != nullptr)
     {
         if (hovering->touches(mousePosition))
         {
             return;
         }
+
         hovering->offHover();
+        for (auto tile : hovering->neighbors)
+        {
+            if (tile != nullptr && tile->touches(mousePosition))
+            {
+                tile->onHover();
+                hovering = tile;
+                return;
+            }
+        }
+        hovering = nullptr;
     }
 
-    auto it = std::find_if(tiles.begin(), tiles.end(),
-        [&mousePosition](Tile const& tile)
-        {
-            return tile.touches(mousePosition);
-        });
-
-    if (it != tiles.end())
+    for (auto& tile : tiles)
     {
-        it->onHover();
+        if (tile.touches(mousePosition))
+        {
+            tile.onHover();
+            hovering = &tile;
+            return;
+        }
     }
 }
 
 void Board::onLeftClick()
 {
-    if (auto selected = findSelected(); nullptr != selected)
+    if (nullptr != hovering)
     {
-        selected->onLeftClick();
+        if (nullptr != selected)
+        {
+            auto piece = selected->getPiece();
+            if (piece != nullptr && piece->validMove(hovering))
+            {
+                piece->move(hovering);
+            }
+            selected->offSelect();
+            selected = nullptr;
+        }
+        else
+        {
+            selected = hovering;
+            selected->onSelect();
+        }
     }
-
-    if (auto hovering = findHovering(); nullptr != hovering)
+    else
     {
-        hovering->onLeftClick();
+        if (selected != nullptr)
+        {
+            selected->offSelect();
+            selected = nullptr;
+        }
     }
 }
 
@@ -79,24 +107,17 @@ void Board::onRightClick()
 {
 }
 
-Tile* Board::findHovering()
+Tile* Board::center()
 {
-    auto it = std::find_if(tiles.begin(), tiles.end(),
-        [](Tile const& tile)
-        {
-            return tile.isHovering();
-        });
-
-    return it == tiles.end() ? nullptr : &*it;
+    return &tiles.front();
 }
 
-Tile* Board::findSelected()
+Tile* Board::getStartPos(size_t index)
 {
-    auto it = std::find_if(tiles.begin(), tiles.end(),
-        [](Tile const& tile)
-        {
-            return tile.isSelected();
-        });
-
-    return it == tiles.end() ? nullptr : &*it;
+    Tile* tile = center();
+    for (size_t i = 0; i < depth - 2u; ++i)
+    {
+        tile = tile->neighbors[index];
+    }
+    return tile;
 }

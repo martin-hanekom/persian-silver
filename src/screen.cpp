@@ -3,8 +3,8 @@
 Screen::Screen()
 {
     window.setVerticalSyncEnabled(true);
-    sf::View view({0.f, 0.f}, {1920.f, 1080.f});
-    //view.zoom(2.0f);
+    sf::View view({0.f, 0.f}, sf::Vector2f(windowSize));
+    view.zoom(defaultZoom);
     window.setView(view);
 }
 

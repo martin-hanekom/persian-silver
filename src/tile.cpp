@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <cstdlib>
 #include <ctime>
 #include "tile.hpp"
@@ -53,17 +54,17 @@ bool Tile::hasNeighbor(size_t index) const
 
 bool Tile::touches(sf::Vector2f point) const
 {
-    return distance(shape.getPosition(), point) < tileRadius;
-}
-
-bool Tile::isHovering() const
-{
-    return hovering;
+    return distance(shape.getPosition(), point) < tileTouch;
 }
 
 bool Tile::isSelected() const
 {
     return selected;
+}
+
+bool Tile::isNeighbor(Tile const* other) const
+{
+    return std::find(neighbors.cbegin(), neighbors.cend(), other) != neighbors.cend();
 }
 
 sf::Vector2f Tile::getPosition() const
@@ -76,6 +77,16 @@ void Tile::setPosition(sf::Vector2f position)
     shape.setPosition(position);
 }
 
+void Tile::setPiece(Piece* piece)
+{
+    this->piece = piece;
+}
+
+Piece* Tile::getPiece()
+{
+    return piece;
+}
+
 sf::Vector2f Tile::getNeigborPosition(size_t index) const
 {
     auto position = shape.getPosition();
@@ -84,32 +95,32 @@ sf::Vector2f Tile::getNeigborPosition(size_t index) const
     return position;
 }
 
-void Tile::offHover()
-{
-    hovering = false;
-    if (!selected)
-    {
-        shape.setFillColor(color);
-    }
-}
-
 void Tile::onHover()
 {
-    hovering = true;
     if (!selected)
     {
         shape.setFillColor(sf::Color::Magenta);
     }
 }
 
-void Tile::onLeftClick()
+void Tile::offHover()
+{
+    if (!selected)
+    {
+        shape.setFillColor(color);
+    }
+}
+
+void Tile::onSelect()
 {
     selected = !selected;
     shape.setFillColor(selected ? sf::Color::Yellow : color);
 }
 
-void Tile::onRightClick()
+void Tile::offSelect()
 {
+    selected = false;
+    shape.setFillColor(color);
 }
 
 constexpr size_t Tile::opposite(size_t index)

@@ -1,8 +1,11 @@
+#include <algorithm>
+#include <functional>
 #include "game.hpp"
 #include "screen.hpp"
 
 Game::Game(): board(tileDepth)
 {
+    players.reserve(Player::maxPlayers);
 }
 
 Game::~Game()
@@ -15,8 +18,16 @@ Game& Game::get()
     return game;
 }
 
-void Game::run()
+void Game::run(size_t playerCount)
 {
+    assert(playerCount >= Player::minPlayers && playerCount <= Player::maxPlayers);
+    players.clear();
+    for (size_t i = 0; i < playerCount; ++i)
+    {
+        auto startIndex = Player::maxPlayers / playerCount * i;
+        players.emplace_back("Player " + std::to_string(i + 1), i, board.getStartPos(startIndex));
+    }
+
     auto& window = Screen::getWindow();
 
     while (window.isOpen())
@@ -30,9 +41,15 @@ void Game::run()
         );
 
         window.clear();
-        board.draw();
+        draw();
         window.display();
     }
+}
+
+void Game::draw() const
+{
+    board.draw();
+    std::for_each(players.cbegin(), players.cend(), std::bind(&Player::draw, std::placeholders::_1));
 }
 
 void Game::onClosed()

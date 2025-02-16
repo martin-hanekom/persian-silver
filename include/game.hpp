@@ -3,6 +3,7 @@
 
 #include <SFML/Graphics.hpp>
 #include "board.hpp"
+#include "player.hpp"
 
 class Game
 {
@@ -14,7 +15,8 @@ public:
 
     static Game& get();
 
-    void run();
+    void run(size_t playerCount);
+    void draw() const;
     void onClosed();
     void onKeyPressed(sf::Event::KeyPressed const& keyPressed);
     void onMouseMoved(sf::Event::MouseMoved const& mouseMove);
@@ -27,7 +29,9 @@ private:
     Game();
     ~Game();
 
+    std::vector<Player> players;
     Board board;
+    size_t currentPlayer = 0;
     sf::Vector2f mouseClickPosition;
     bool mouseDragging = false;
 };

@@ -13,13 +13,14 @@ public:
     void onMouseMoved(sf::Vector2f mousePosition);
     void onLeftClick();
     void onRightClick();
+    Tile* center();
+    Tile* getStartPos(size_t index);
 
 private:
-    Tile* findHovering();
-    Tile* findSelected();
-
     size_t depth;
     std::vector<Tile> tiles;
+    Tile* hovering = nullptr;
+    Tile* selected = nullptr;
 };
 
 #endif

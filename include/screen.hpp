@@ -26,9 +26,9 @@ private:
 
     static constexpr sf::Vector2u windowSize{1920u, 1080u};
     static constexpr char const* title{"Persian Silver"};
+    static constexpr float defaultZoom = 3.f;
 
     sf::RenderWindow window{sf::VideoMode(windowSize), "Persian Silver", sf::State::Fullscreen};
-    sf::Vector2f viewCenter{0.f, 0.f};
 };
 
 #endif
