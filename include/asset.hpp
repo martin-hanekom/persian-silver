@@ -14,6 +14,7 @@ public:
 
     static Asset& get();
     static sf::Texture& getTexture(std::string const& name);
+    static sf::Font& getFont();
 
 private:
     Asset() = default;

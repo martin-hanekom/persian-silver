@@ -3,6 +3,8 @@
 #include <cmath>
 #include <deque>
 #include "board.hpp"
+#include "action.hpp"
+#include "game.hpp"
 
 Board::Board(size_t depth)
     : depth(depth)
@@ -40,13 +42,13 @@ void Board::draw() const
     }
 }
 
-void Board::onMouseMoved(sf::Vector2f mousePosition)
+bool Board::onMouseMoved(sf::Vector2f mousePosition)
 {
     if (hovering != nullptr)
     {
         if (hovering->touches(mousePosition))
         {
-            return;
+            return true;
         }
 
         hovering->offHover();
@@ -56,7 +58,7 @@ void Board::onMouseMoved(sf::Vector2f mousePosition)
             {
                 tile->onHover();
                 hovering = tile;
-                return;
+                return true;
             }
         }
         hovering = nullptr;
@@ -68,43 +70,41 @@ void Board::onMouseMoved(sf::Vector2f mousePosition)
         {
             tile.onHover();
             hovering = &tile;
-            return;
+            return true;
         }
     }
+
+    return false;
 }
 
-void Board::onLeftClick()
+bool Board::onLeftClick()
 {
+    if (nullptr != selected)
+    {
+        selected->offSelect();
+        selected = nullptr;
+    }
+
     if (nullptr != hovering)
     {
-        if (nullptr != selected)
-        {
-            auto piece = selected->getPiece();
-            if (piece != nullptr && piece->validMove(hovering))
-            {
-                piece->move(hovering);
-            }
-            selected->offSelect();
-            selected = nullptr;
-        }
-        else
-        {
-            selected = hovering;
-            selected->onSelect();
-        }
+        selected = hovering;
+        selected->onSelect();
+        return true;
     }
-    else
-    {
-        if (selected != nullptr)
-        {
-            selected->offSelect();
-            selected = nullptr;
-        }
-    }
+    return false;
 }
 
-void Board::onRightClick()
+bool Board::onRightClick()
 {
+    if (nullptr == hovering || nullptr == selected)
+    {
+        return false;
+    }
+
+    Game::submit(MoveAction(selected, hovering));
+    selected->offSelect();
+    selected = nullptr;
+    return true;
 }
 
 Tile* Board::center()

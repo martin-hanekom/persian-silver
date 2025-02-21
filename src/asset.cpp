@@ -18,3 +18,9 @@ sf::Texture& Asset::getTexture(std::string const& name)
 
     return textures[name];
 }
+
+sf::Font& Asset::getFont()
+{
+    static sf::Font font("assets/arial.ttf");
+    return font;
+}

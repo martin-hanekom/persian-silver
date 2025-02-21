@@ -23,7 +23,17 @@ void Piece::draw() const
     Screen::draw(sprite);
 }
 
-Tile* Piece::getTile() const
+bool Piece::isPlayer(Player const& p) const
+{
+    return player == &p;
+}
+
+Player* Piece::getPlayer()
+{
+    return player;
+}
+
+Tile* Piece::getTile()
 {
     return tile;
 }

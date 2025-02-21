@@ -10,9 +10,9 @@ class Board
 public:
     Board(size_t depth);
     void draw() const;
-    void onMouseMoved(sf::Vector2f mousePosition);
-    void onLeftClick();
-    void onRightClick();
+    bool onMouseMoved(sf::Vector2f mousePosition);
+    bool onLeftClick();
+    bool onRightClick();
     Tile* center();
     Tile* getStartPos(size_t index);
 

@@ -5,8 +5,7 @@
 
 bool Unit::validMove(Tile* newTile) const
 {
-    assert(newTile != nullptr);
-    return newTile->getPiece() == nullptr && tile->isNeighbor(newTile);
+    return nullptr != newTile && !newTile->hasPiece() && tile->isNeighbor(newTile);
 }
 
 void Unit::move(Tile* newTile)

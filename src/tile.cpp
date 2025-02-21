@@ -87,6 +87,11 @@ Piece* Tile::getPiece()
     return piece;
 }
 
+bool Tile::hasPiece() const
+{
+    return piece != nullptr;
+}
+
 sf::Vector2f Tile::getNeigborPosition(size_t index) const
 {
     auto position = shape.getPosition();
@@ -99,7 +104,7 @@ void Tile::onHover()
 {
     if (!selected)
     {
-        shape.setFillColor(sf::Color::Magenta);
+        shape.setFillColor(Tile::hoverColor);
     }
 }
 
@@ -113,8 +118,8 @@ void Tile::offHover()
 
 void Tile::onSelect()
 {
-    selected = !selected;
-    shape.setFillColor(selected ? sf::Color::Yellow : color);
+    selected = true;
+    shape.setFillColor(Tile::selectColor);
 }
 
 void Tile::offSelect()

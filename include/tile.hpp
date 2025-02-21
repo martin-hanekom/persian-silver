@@ -19,8 +19,8 @@ public:
     void setPosition(sf::Vector2f position);
 
     void setPiece(Piece* piece);
-
     Piece* getPiece();
+    bool hasPiece() const;
 
     void onHover();
     void offHover();
@@ -38,6 +38,8 @@ public:
     static constexpr float tileRotation = M_PI / tileSides;
     static constexpr sf::Color lightGrass{65, 152, 10};
     static constexpr sf::Color darkGrass{19, 133, 16};
+    static constexpr sf::Color hoverColor{sf::Color::Magenta};
+    static constexpr sf::Color selectColor{sf::Color::Yellow};
 
     int const depth;
     std::array<Tile*, tileSides> neighbors{nullptr};

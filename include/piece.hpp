@@ -14,7 +14,10 @@ public:
 
     void draw() const;
 
-    Tile* getTile() const;
+    bool isPlayer(Player const& p) const;
+    Player* getPlayer();
+    Tile* getTile();
+
     virtual bool validMove(Tile* tile) const = 0;
     virtual void move(Tile* tile) = 0;
 

@@ -1,11 +1,16 @@
 #include <algorithm>
 #include <functional>
 #include "game.hpp"
-#include "screen.hpp"
+#include "asset.hpp"
 
-Game::Game(): board(tileDepth)
+Game::Game(): screen(Screen::get()), board(tileDepth), nextButton({120.f, 60.f}, "next", std::bind(Game::nextPlayer, this)), banner(Asset::getFont(), "Player 1")
 {
     players.reserve(Player::maxPlayers);
+    nextButton.setFillColor(sf::Color::Red);
+    nextButton.setTextColor(sf::Color::Black);
+    nextButton.setPosition(Screen::getCornerOffset<Screen::Corner::BottomRight>() - nextButton.getSize());
+    banner.setFillColor(sf::Color::White);
+    //banner.setPosition(Screen::getCornerOffset<Screen::Corner::TopLeft>());
 }
 
 Game::~Game()
@@ -28,7 +33,7 @@ void Game::run(size_t playerCount)
         players.emplace_back("Player " + std::to_string(i + 1), i, board.getStartPos(startIndex));
     }
 
-    auto& window = Screen::getWindow();
+    auto& window = screen.getWindow();
 
     while (window.isOpen())
     {
@@ -41,15 +46,25 @@ void Game::run(size_t playerCount)
         );
 
         window.clear();
-        draw();
+        drawMain();
+        drawUI();
+        screen.setMainView();
         window.display();
     }
 }
 
-void Game::draw() const
+void Game::drawMain() const
 {
+    screen.setMainView();
     board.draw();
     std::for_each(players.cbegin(), players.cend(), std::bind(&Player::draw, std::placeholders::_1));
+}
+
+void Game::drawUI() const
+{
+    screen.setUIView();
+    nextButton.draw();
+    Screen::draw(banner);
 }
 
 void Game::onClosed()
@@ -72,29 +87,30 @@ void Game::onKeyPressed(sf::Event::KeyPressed const& keyPressed)
 void Game::onMouseMoved(sf::Event::MouseMoved const& mouseMove)
 {
     auto& screen = Screen::get();
-    auto mousePosition = screen.mapPixelToCoords(mouseMove.position);
+    auto mouseMainPosition = screen.mainViewCoords(mouseMove.position);
+    auto mouseUIPosition = screen.uiViewCoords(mouseMove.position);
 
     if (mouseDragging && sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
     {
-        screen.pan(mouseClickPosition - mousePosition);
+        screen.pan(mouseClickPosition - mouseMainPosition);
     }
     else
     {
         mouseDragging = false;
-        board.onMouseMoved(mousePosition);
+        nextButton.onMouseMoved(mouseUIPosition) || board.onMouseMoved(mouseMainPosition);
     }
 }
 
 void Game::onMouseButtonPressed(sf::Event::MouseButtonPressed const& mouseButton)
 {
     auto& screen = Screen::get();
-    mouseClickPosition = screen.mapPixelToCoords(mouseButton.position);
+    mouseClickPosition = screen.mainViewCoords(mouseButton.position);
     mouseDragging = true;
 
     switch (mouseButton.button)
     {
         case sf::Mouse::Button::Left:
-            board.onLeftClick();
+            nextButton.onLeftClick() || board.onLeftClick();
             break;
         case sf::Mouse::Button::Right:
             board.onRightClick();
@@ -111,4 +127,28 @@ void Game::onMouseWheelScrolled(sf::Event::MouseWheelScrolled const& mouseScroll
     {
         Screen::get().zoom(1.f - mouseScroll.delta * 0.1f);
     }
+}
+
+void Game::submit(MoveAction&& action)
+{
+    auto& game = Game::get();
+    if (action.valid())
+    {
+        auto piece = action.getPiece();
+        if (game.isCurrentPlayerPiece(*piece))
+        {
+            piece->move(action.to);
+        }
+    }
+}
+
+bool Game::isCurrentPlayerPiece(Piece const& piece) const
+{
+    return piece.isPlayer(players[currentPlayer]);
+}
+
+void Game::nextPlayer()
+{
+    currentPlayer = (currentPlayer + 1) % players.size();
+    banner.setString("Player " + std::to_string(currentPlayer + 1));
 }
