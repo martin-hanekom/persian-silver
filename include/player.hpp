@@ -11,7 +11,9 @@ public:
     ~Player();
 
     void draw() const;
+    void reset();
     sf::Color const& getColor() const;
+    std::string const& getName() const;
 
     static constexpr size_t maxPlayers = 6u;
     static constexpr size_t minPlayers = 2u;

@@ -10,6 +10,7 @@ public:
 
     bool validMove(Tile* newTile) const override;
     void move(Tile* tile) override;
+    void reset() override;
 
 private:
 };

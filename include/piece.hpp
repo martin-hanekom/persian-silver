@@ -20,6 +20,7 @@ public:
 
     virtual bool validMove(Tile* tile) const = 0;
     virtual void move(Tile* tile) = 0;
+    virtual void reset() = 0;
 
 protected:
     sf::Sprite sprite;

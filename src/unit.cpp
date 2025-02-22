@@ -2,10 +2,11 @@
 #include "player.hpp"
 #include "unit.hpp"
 #include "asset.hpp"
+#include "util.hpp"
 
 bool Unit::validMove(Tile* newTile) const
 {
-    return nullptr != newTile && !newTile->hasPiece() && tile->isNeighbor(newTile);
+    return energy && nullptr != newTile && !newTile->hasPiece() && tile->isNeighbor(newTile);
 }
 
 void Unit::move(Tile* newTile)
@@ -14,6 +15,17 @@ void Unit::move(Tile* newTile)
     tile = newTile;
     tile->setPiece(this);
     sprite.setPosition(tile->getPosition());
+    energy = false;
+    sprite.setColor(opaque(sprite.getColor(), 128u));
+}
+
+void Unit::reset()
+{
+    if (!energy)
+    {
+        sprite.setColor(opaque(sprite.getColor(), 255u));
+    }
+    energy = true;
 }
 
 Man::Man(Player* player, Tile* tile)

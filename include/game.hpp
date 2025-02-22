@@ -7,6 +7,7 @@
 #include "player.hpp"
 #include "ui.hpp"
 #include "action.hpp"
+#include "info.hpp"
 
 class Game
 {
@@ -19,6 +20,7 @@ public:
     static Game& get();
 
     void run(size_t playerCount);
+    void restart(size_t playerCount);
     void drawMain() const;
     void drawUI() const;
     void onClosed();
@@ -42,7 +44,7 @@ private:
     std::vector<Player> players;
     Board board;
     Button nextButton;
-    sf::Text banner;
+    Info info;
 
     size_t currentPlayer = 0;
     sf::Vector2f mouseClickPosition;

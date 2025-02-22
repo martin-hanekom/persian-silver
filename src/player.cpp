@@ -25,7 +25,20 @@ void Player::draw() const
     std::for_each(pieces.cbegin(), pieces.cend(), std::bind(&Piece::draw, std::placeholders::_1));
 }
 
+void Player::reset()
+{
+    for (auto& piece : pieces)
+    {
+        piece->reset();
+    }
+}
+
 sf::Color const& Player::getColor() const
 {
     return color;
+}
+
+std::string const& Player::getName() const
+{
+    return name;
 }

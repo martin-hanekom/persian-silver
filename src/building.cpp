@@ -8,3 +8,7 @@ bool Building::validMove(Tile* newTile) const
 void Building::move(Tile* newTile)
 {
 }
+
+void Building::reset()
+{
+}

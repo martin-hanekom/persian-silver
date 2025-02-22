@@ -37,11 +37,11 @@ public:
         switch (corner)
         {
             case Screen::Corner::TopLeft:
-                return {-windowSize.x / 2.f, -windowSize.y / 2.f};
+                return {-(windowSize.x / 2.f), -(windowSize.y / 2.f)};
             case Screen::Corner::TopRight:
-                return {windowSize.x / 2.f, -windowSize.y / 2.f};
+                return {windowSize.x / 2.f, -(windowSize.y / 2.f)};
             case Screen::Corner::BottomLeft:
-                return {-windowSize.x / 2.f, windowSize.y / 2.f};
+                return {-(windowSize.x / 2.f), windowSize.y / 2.f};
             case Screen::Corner::BottomRight:
                 return {windowSize.x / 2.f, windowSize.y / 2.f};
             default:

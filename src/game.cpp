@@ -3,14 +3,12 @@
 #include "game.hpp"
 #include "asset.hpp"
 
-Game::Game(): screen(Screen::get()), board(tileDepth), nextButton({120.f, 60.f}, "next", std::bind(Game::nextPlayer, this)), banner(Asset::getFont(), "Player 1")
+Game::Game(): screen(Screen::get()), board(tileDepth), nextButton({120.f, 60.f}, "next", std::bind(Game::nextPlayer, this))
 {
     players.reserve(Player::maxPlayers);
     nextButton.setFillColor(sf::Color::Red);
     nextButton.setTextColor(sf::Color::Black);
     nextButton.setPosition(Screen::getCornerOffset<Screen::Corner::BottomRight>() - nextButton.getSize());
-    banner.setFillColor(sf::Color::White);
-    //banner.setPosition(Screen::getCornerOffset<Screen::Corner::TopLeft>());
 }
 
 Game::~Game()
@@ -25,14 +23,7 @@ Game& Game::get()
 
 void Game::run(size_t playerCount)
 {
-    assert(playerCount >= Player::minPlayers && playerCount <= Player::maxPlayers);
-    players.clear();
-    for (size_t i = 0; i < playerCount; ++i)
-    {
-        auto startIndex = Player::maxPlayers / playerCount * i;
-        players.emplace_back("Player " + std::to_string(i + 1), i, board.getStartPos(startIndex));
-    }
-
+    restart(playerCount);
     auto& window = screen.getWindow();
 
     while (window.isOpen())
@@ -53,6 +44,19 @@ void Game::run(size_t playerCount)
     }
 }
 
+void Game::restart(size_t playerCount)
+{
+    assert(playerCount >= Player::minPlayers && playerCount <= Player::maxPlayers);
+    players.clear();
+    for (size_t i = 0; i < playerCount; ++i)
+    {
+        auto startIndex = Player::maxPlayers / playerCount * i;
+        players.emplace_back("Player " + std::to_string(i + 1), i, board.getStartPos(startIndex));
+    }
+
+    info.setPlayer(players[currentPlayer]);
+}
+
 void Game::drawMain() const
 {
     screen.setMainView();
@@ -63,8 +67,8 @@ void Game::drawMain() const
 void Game::drawUI() const
 {
     screen.setUIView();
+    info.draw();
     nextButton.draw();
-    Screen::draw(banner);
 }
 
 void Game::onClosed()
@@ -149,6 +153,9 @@ bool Game::isCurrentPlayerPiece(Piece const& piece) const
 
 void Game::nextPlayer()
 {
+    auto& oldPlayer = players[currentPlayer];
+    oldPlayer.reset();
+    
     currentPlayer = (currentPlayer + 1) % players.size();
-    banner.setString("Player " + std::to_string(currentPlayer + 1));
+    info.setPlayer(players[currentPlayer]);
 }
