@@ -29,6 +29,11 @@ void Unit::reset()
 }
 
 Man::Man(Player* player, Tile* tile)
-    : Unit(player, Asset::getTexture("man"), tile)
+    : Unit("man", player, tile)
 {
+}
+
+std::set<PieceType> Man::buildable() const
+{
+    return {PieceType::City};
 }

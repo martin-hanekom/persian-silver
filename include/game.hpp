@@ -5,7 +5,6 @@
 #include "screen.hpp"
 #include "board.hpp"
 #include "player.hpp"
-#include "ui.hpp"
 #include "action.hpp"
 #include "info.hpp"
 
@@ -29,9 +28,12 @@ public:
     void onMouseButtonPressed(sf::Event::MouseButtonPressed const& mouseButton);
     void onMouseWheelScrolled(sf::Event::MouseWheelScrolled const& mouseScroll);
 
+    static void submit(SelectAction&& action);
     static void submit(MoveAction&& action);
 
+    static void nextPlayerCallback();
     void nextPlayer();
+
     bool isCurrentPlayerPiece(Piece const& piece) const;
 
     static constexpr size_t tileDepth = 7u;
@@ -43,7 +45,6 @@ private:
     Screen& screen;
     std::vector<Player> players;
     Board board;
-    Button nextButton;
     Info info;
 
     size_t currentPlayer = 0;

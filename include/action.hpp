@@ -1,42 +1,56 @@
 #ifndef PERSIAN_SILVER_ACTION_HPP
 #define PERSIAN_SILVER_ACTION_HPP
 
-#include <memory>
 #include "tile.hpp"
+
+namespace silver {
 
 enum class ActionType
 {
+    Select,
     Move,
     Fight,
     Build
 };
 
+
 class Action
 {
 public:
-    virtual bool valid() const = 0;
-    virtual Piece* getPiece() = 0;
+    Action(ActionType type, Tile* tile);
+
+    bool valid() const;
+    Piece* getPiece();
+
+protected:
+    ActionType type;
+    Tile* const tile;
 };
 
-class MoveAction: public Action
+class SelectAction : public Action
 {
 public:
-    MoveAction(Tile* from, Tile* to);
-    bool valid() const override;
-    Piece* getPiece() override;
-
-    Tile* const from;
-    Tile* const to;
+    SelectAction(Tile* tile);
 };
 
-class FightAction: public Action
+class MoveAction : public Action
 {
-
+public:
+    MoveAction(Tile* tile);
 };
 
-class BuildAction: public Action
+class FightAction : public Action
 {
-
+public:
+    FightAction(Tile* tile);
 };
+
+class BuildAction : public Action
+{
+public:
+    BuildAction(Tile* tile);
+};
+
+}
 
 #endif

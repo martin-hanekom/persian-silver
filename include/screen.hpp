@@ -31,6 +31,8 @@ public:
         BottomRight,
     };
 
+    static constexpr sf::Vector2u windowSize{1920u, 1080u};
+
     template <Corner corner>
     static constexpr sf::Vector2f getCornerOffset()
     {
@@ -54,7 +56,6 @@ private:
     Screen();
     ~Screen();
 
-    static constexpr sf::Vector2u windowSize{1920u, 1080u};
     static constexpr char const* title{"Persian Silver"};
     static constexpr float defaultZoom = 3.f;
 

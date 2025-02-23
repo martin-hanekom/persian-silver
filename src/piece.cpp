@@ -3,15 +3,19 @@
 #include "tile.hpp"
 #include "asset.hpp"
 #include "screen.hpp"
+#include "unit.hpp"
+#include "building.hpp"
 
-Piece::Piece(Player* player, sf::Texture const& texture, Tile* tile)
-    : player(player), sprite(texture), tile(tile)
+Piece::Piece(std::string const& name, Player* player, Tile* tile)
+    : name(name), sprite(Asset::getTexture(name)), player(player), tile(tile)
 {
-    assert(tile != nullptr);
     sprite.setOrigin(sprite.getLocalBounds().getCenter());
     sprite.setColor(player->getColor());
-    sprite.setPosition(tile->getPosition());
-    tile->setPiece(this);
+    if (nullptr != tile)
+    {
+        sprite.setPosition(tile->getPosition());
+        tile->setPiece(this);
+    }
 }
 
 Piece::~Piece()
@@ -21,6 +25,19 @@ Piece::~Piece()
 void Piece::draw() const
 {
     Screen::draw(sprite);
+}
+
+Piece* Piece::create(PieceType pieceType, Player* player, Tile* tile)
+{
+    switch (pieceType)
+    {
+        case PieceType::Man:
+            return new Man(player, tile);
+        case PieceType::City:
+            return new City(player, tile);
+        default:
+            return nullptr;
+    }
 }
 
 bool Piece::isPlayer(Player const& p) const
@@ -36,4 +53,9 @@ Player* Piece::getPlayer()
 Tile* Piece::getTile()
 {
     return tile;
+}
+
+std::string const& Piece::getName() const
+{
+    return name;
 }

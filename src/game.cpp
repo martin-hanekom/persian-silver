@@ -3,12 +3,9 @@
 #include "game.hpp"
 #include "asset.hpp"
 
-Game::Game(): screen(Screen::get()), board(tileDepth), nextButton({120.f, 60.f}, "next", std::bind(Game::nextPlayer, this))
+Game::Game(): screen(Screen::get()), board(tileDepth) 
 {
     players.reserve(Player::maxPlayers);
-    nextButton.setFillColor(sf::Color::Red);
-    nextButton.setTextColor(sf::Color::Black);
-    nextButton.setPosition(Screen::getCornerOffset<Screen::Corner::BottomRight>() - nextButton.getSize());
 }
 
 Game::~Game()
@@ -68,7 +65,6 @@ void Game::drawUI() const
 {
     screen.setUIView();
     info.draw();
-    nextButton.draw();
 }
 
 void Game::onClosed()
@@ -101,7 +97,7 @@ void Game::onMouseMoved(sf::Event::MouseMoved const& mouseMove)
     else
     {
         mouseDragging = false;
-        nextButton.onMouseMoved(mouseUIPosition) || board.onMouseMoved(mouseMainPosition);
+        info.onMouseMoved(mouseUIPosition) || board.onMouseMoved(mouseMainPosition);
     }
 }
 
@@ -114,7 +110,7 @@ void Game::onMouseButtonPressed(sf::Event::MouseButtonPressed const& mouseButton
     switch (mouseButton.button)
     {
         case sf::Mouse::Button::Left:
-            nextButton.onLeftClick() || board.onLeftClick();
+            info.onLeftClick() || board.onLeftClick();
             break;
         case sf::Mouse::Button::Right:
             board.onRightClick();
@@ -131,6 +127,12 @@ void Game::onMouseWheelScrolled(sf::Event::MouseWheelScrolled const& mouseScroll
     {
         Screen::get().zoom(1.f - mouseScroll.delta * 0.1f);
     }
+}
+
+void Game::submit(SelectAction&& action)
+{
+    auto& game = Game::get();
+    game.info.setPiece(action.getPiece());
 }
 
 void Game::submit(MoveAction&& action)
@@ -151,11 +153,16 @@ bool Game::isCurrentPlayerPiece(Piece const& piece) const
     return piece.isPlayer(players[currentPlayer]);
 }
 
+void Game::nextPlayerCallback()
+{
+    Game::get().nextPlayer();
+}
+
 void Game::nextPlayer()
 {
     auto& oldPlayer = players[currentPlayer];
     oldPlayer.reset();
-    
+
     currentPlayer = (currentPlayer + 1) % players.size();
     info.setPlayer(players[currentPlayer]);
 }

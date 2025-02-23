@@ -11,12 +11,13 @@ int main()
     game.run(3u);
     return 0;
 }
+//*/
 
 /*
 int main()
 {
  sf::Image image;
-    if (!image.loadFromFile("assets/man.png"))
+    if (!image.loadFromFile("assets/farm.png"))
     {
         return -1;
     }
@@ -33,7 +34,7 @@ int main()
         }
     }
 
-    if (!image.saveToFile("assets/man_white.png"))
+    if (!image.saveToFile("assets/farm_white.png"))
     {
         return -1;
     }

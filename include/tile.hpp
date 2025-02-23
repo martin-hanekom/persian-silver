@@ -1,56 +1,68 @@
 #ifndef PERSIAN_SILVER_TILE_HPP
 #define PERSIAN_SILVER_TILE_HPP
 
-#include <array>
-#include <cmath>
 #include <SFML/Graphics.hpp>
 #include "piece.hpp"
+#include "ui.hpp"
+
+namespace silver
+{
 
 class Tile
 {
 public:
-    Tile(sf::Vector2f pos, int depth);
-    void draw() const;
-    void setNeighbor(size_t index, Tile& neighbor);
-    Tile* getNeighbor(size_t index);
-    bool hasNeighbor(size_t index) const;
-    sf::Vector2f getPosition() const;
-    sf::Vector2f getNeigborPosition(size_t index) const;
-    void setPosition(sf::Vector2f position);
-
     void setPiece(Piece* piece);
     Piece* getPiece();
     bool hasPiece() const;
 
-    void onHover();
-    void offHover();
-    void onSelect();
-    void offSelect();
+protected:
+    Piece* piece = nullptr;
+};
 
-    bool touches(sf::Vector2f point) const;
-    bool isSelected() const;
-    bool isNeighbor(Tile const* other) const;
+class BoardTile: public Circle, Tile
+{
+public:
+    BoardTile(sf::Vector2f pos, int depth);
+
+    void setNewNeighbor(size_t index, BoardTile* other);
+    void setNeighbor(size_t index, BoardTile* other);
+    BoardTile* getNeighbor(size_t index);
+    bool hasNeighbor(size_t index) const;
+    sf::Vector2f getNeigborPosition(size_t index) const;
+
+    void draw() const override;
+    bool onLeftClick() override;
+    bool onRightClick() override;
 
     static constexpr size_t tileSides = 6;
     static constexpr float tileRadius = 150.f;
     static constexpr float tilePadding = -18.f;
-    static constexpr float tileTouch = tileRadius + tilePadding / 2.f;
     static constexpr float tileRotation = M_PI / tileSides;
     static constexpr sf::Color lightGrass{65, 152, 10};
     static constexpr sf::Color darkGrass{19, 133, 16};
-    static constexpr sf::Color hoverColor{sf::Color::Magenta};
+    static constexpr sf::Color defaultHoverColor{sf::Color::Magenta};
     static constexpr sf::Color selectColor{sf::Color::Yellow};
 
-    int const depth;
-    std::array<Tile*, tileSides> neighbors{nullptr};
-
-private:
+protected:
     static constexpr size_t opposite(size_t index);
 
-    sf::CircleShape shape{tileRadius, tileSides};
-    sf::Color color;
-    Piece* piece;
-    bool selected = false;
+    int depth;
+    std::array<BoardTile*, tileSides> neighbors{nullptr};
 };
+
+class MenuTile: public Rectangle, Tile
+{
+public:
+    MenuTile(sf::Vector2f pos);
+
+    void draw() const override;
+    bool onLeftClick() override;
+
+    static constexpr float tileSize = 100.f;
+    static constexpr sf::Color tileColor{80, 92, 95};
+    static constexpr sf::Color defaultHoverColor{85, 97, 100};
+};
+
+}
 
 #endif

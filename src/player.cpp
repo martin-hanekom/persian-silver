@@ -6,7 +6,7 @@
 Player::Player(std::string const& name, size_t index, Tile* startTile)
     : name(name), index(index), color(playerColors[index]), startTile(startTile)
 {
-    pieces.push_back(new Man(this, startTile));
+    pieces.push_back(Piece::create(PieceType::Man, this, startTile));
     /*
     for (size_t i = 0; i < 10; ++i)
     {
@@ -17,7 +17,10 @@ Player::Player(std::string const& name, size_t index, Tile* startTile)
 
 Player::~Player()
 {
-    std::for_each(pieces.begin(), pieces.end(), std::default_delete<Piece>());
+    for (auto i = 0u; i < pieces.size(); ++i)
+    {
+        delete pieces[i];
+    }
 }
 
 void Player::draw() const

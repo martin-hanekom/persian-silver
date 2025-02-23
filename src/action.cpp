@@ -1,26 +1,36 @@
 #include "action.hpp"
 
-MoveAction::MoveAction(Tile* from, Tile* to): from(from), to(to)
+namespace silver
+{
+
+Action::Action(ActionType type, Tile* tile) : type(type), tile(tile)
 {
 }
 
-bool MoveAction::valid() const
+bool Action::valid() const
 {
-    if (nullptr == from || nullptr == to)
-    {
-        return false;
-    }
-
-    auto piece = from->getPiece();
-    return nullptr != piece && piece->validMove(to);
+    return nullptr != tile && tile->hasPiece();
 }
 
-Piece* MoveAction::getPiece()
+Piece* Action::getPiece()
 {
-    if (nullptr == from)
-    {
-        return nullptr;
-    }
+    return nullptr == tile ? nullptr : tile->getPiece();
+}
 
-    return from->getPiece();
+SelectAction::SelectAction(Tile* tile) : Action(ActionType::Select, tile)
+{
+}
+
+MoveAction::MoveAction(Tile* tile) : Action(ActionType::Move, tile)
+{
+}
+
+FightAction::FightAction(Tile* tile) : Action(ActionType::Fight, tile)
+{
+}
+
+BuildAction::BuildAction(Tile* tile) : Action(ActionType::Build, tile)
+{
+}
+
 }

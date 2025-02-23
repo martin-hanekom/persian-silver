@@ -89,9 +89,10 @@ bool Board::onLeftClick()
     {
         selected = hovering;
         selected->onSelect();
-        return true;
     }
-    return false;
+
+    Game::submit(SelectAction(selected));
+    return selected != nullptr;
 }
 
 bool Board::onRightClick()
