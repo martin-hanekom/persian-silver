@@ -3,7 +3,8 @@
 
 #include "tile.hpp"
 
-namespace silver {
+namespace silver
+{
 
 enum class ActionType
 {
@@ -13,42 +14,49 @@ enum class ActionType
     Build
 };
 
-
 class Action
 {
 public:
-    Action(ActionType type, Tile* tile);
+    Action(ActionType type);
 
-    bool valid() const;
-    Piece* getPiece();
+    virtual bool valid() const = 0;
+    virtual Piece* getPiece() = 0;
 
-protected:
     ActionType type;
-    Tile* const tile;
 };
 
 class SelectAction : public Action
 {
 public:
-    SelectAction(Tile* tile);
+    SelectAction(BoardTile* tile);
+
+    bool valid() const override;
+    Piece* getPiece() override;
+
+    BoardTile* tile;
 };
 
 class MoveAction : public Action
 {
 public:
-    MoveAction(Tile* tile);
-};
+    MoveAction(BoardTile* from, BoardTile* to);
 
-class FightAction : public Action
-{
-public:
-    FightAction(Tile* tile);
+    bool valid() const override;
+    Piece* getPiece() override;
+
+    BoardTile* from;
+    BoardTile* to;
 };
 
 class BuildAction : public Action
 {
 public:
-    BuildAction(Tile* tile);
+    BuildAction(MenuTile* tile);
+
+    bool valid() const override;
+    Piece* getPiece() override;
+
+    MenuTile* tile;
 };
 
 }

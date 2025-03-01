@@ -14,18 +14,18 @@ public:
     virtual bool onLeftClick();
     virtual bool onRightClick();
 
+    virtual bool touches(sf::Vector2f mousePos) const = 0;
 protected:
-    virtual bool touches(sf::Vector2f mousePos) = 0;
     virtual void onHover();
     virtual void offHover();
 
     bool hovering = false;
 };
 
-class Sprite
+class Hoverable
 {
 public:
-    Sprite(sf::Vector2f pos);
+    Hoverable(sf::Vector2f pos);
 
     virtual void draw() const = 0;
     virtual void setPosition(sf::Vector2f newPos);
@@ -40,7 +40,7 @@ protected:
     sf::Color hoverColor;
 };
 
-class Circle : public Interaction, Sprite
+class Circle : public Interaction, public Hoverable
 {
 public:
     Circle(sf::Vector2f pos, float radius, size_t pointCount = 30, bool centered = false);
@@ -51,17 +51,18 @@ public:
     virtual void setHoverColor(sf::Color newColor) override;
     virtual void setRadius(float radius);
 
+    sf::CircleShape& getShape();
+    bool touches(sf::Vector2f mousePos) const override;
     float getRadius() const;
 
 protected:
-    bool touches(sf::Vector2f mousePos) override;
     void onHover() override;
     void offHover() override;
 
     sf::CircleShape shape;
 };
 
-class Rectangle : public Interaction, Sprite
+class Rectangle : public Interaction, public Hoverable
 {
 public:
     Rectangle(sf::Vector2f pos, sf::Vector2f size, bool centered = false);
@@ -72,10 +73,11 @@ public:
     virtual void setHoverColor(sf::Color newColor) override;
     virtual void setSize(sf::Vector2f size);
 
+    sf::RectangleShape& getShape();
+    bool touches(sf::Vector2f mousePos) const override;
     sf::Vector2f getSize() const;
 
 protected:
-    bool touches(sf::Vector2f mousePos) override;
     void offHover() override;
     void onHover() override;
 
@@ -87,6 +89,7 @@ class Button : public Rectangle
 public:
     Button(sf::Vector2f pos, sf::Vector2f size, std::function<void()> callback, std::string const& message = {});
 
+    void setPosition(sf::Vector2f newPos) override;
     void setTextColor(sf::Color color);
     void setCharacterSize(unsigned size);
 

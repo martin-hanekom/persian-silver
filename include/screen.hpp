@@ -3,6 +3,9 @@
 
 #include <SFML/Graphics.hpp>
 
+namespace silver
+{
+
 class Screen
 {
 public:
@@ -63,5 +66,7 @@ private:
     sf::View mainView{{0.f, 0.f}, sf::Vector2f(windowSize)};
     sf::View uiView{{0.f, 0.f}, sf::Vector2f(windowSize)};
 };
+
+}
 
 #endif

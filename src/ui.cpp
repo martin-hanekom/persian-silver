@@ -39,31 +39,31 @@ void Interaction::offHover()
 {
 }
 
-Sprite::Sprite(sf::Vector2f pos) : pos(pos)
+Hoverable::Hoverable(sf::Vector2f pos) : pos(pos)
 {
 }
 
-void Sprite::setPosition(sf::Vector2f newPos)
+void Hoverable::setPosition(sf::Vector2f newPos)
 {
     pos = newPos;
 }
 
-void Sprite::setFillColor(sf::Color newColor)
+void Hoverable::setFillColor(sf::Color newColor)
 {
     color = newColor;
 }
 
-void Sprite::setHoverColor(sf::Color newColor)
+void Hoverable::setHoverColor(sf::Color newColor)
 {
     hoverColor = newColor;
 }
 
-sf::Vector2f Sprite::getPosition() const
+sf::Vector2f Hoverable::getPosition() const
 {
     return pos;
 }
 
-Circle::Circle(sf::Vector2f pos, float radius, size_t pointCount, bool centered) : Sprite(pos), shape(radius, pointCount)
+Circle::Circle(sf::Vector2f pos, float radius, size_t pointCount, bool centered) : Hoverable(pos), shape(radius, pointCount)
 {
     shape.setPosition(pos);
     if (centered)
@@ -79,13 +79,13 @@ void Circle::draw() const
 
 void Circle::setPosition(sf::Vector2f newPos)
 {
-    Sprite::setPosition(newPos);
+    Hoverable::setPosition(newPos);
     shape.setPosition(newPos);
 }
 
 void Circle::setFillColor(sf::Color newColor)
 {
-    Sprite::setFillColor(newColor);
+    Hoverable::setFillColor(newColor);
     if (!hovering)
     {
         shape.setFillColor(newColor);
@@ -94,14 +94,19 @@ void Circle::setFillColor(sf::Color newColor)
 
 void Circle::setHoverColor(sf::Color newColor)
 {
-    Sprite::setHoverColor(newColor);
+    Hoverable::setHoverColor(newColor);
     if (hovering)
     {
         shape.setFillColor(newColor);
     }
 }
 
-bool Circle::touches(sf::Vector2f mousePos)
+sf::CircleShape& Circle::getShape()
+{
+    return shape;
+}
+
+bool Circle::touches(sf::Vector2f mousePos) const
 {
     return distance(pos, mousePos) < shape.getRadius();
 }
@@ -126,7 +131,7 @@ float Circle::getRadius() const
     return shape.getRadius();
 }
 
-Rectangle::Rectangle(sf::Vector2f pos, sf::Vector2f size, bool centered) : Sprite(pos), shape(size)
+Rectangle::Rectangle(sf::Vector2f pos, sf::Vector2f size, bool centered) : Hoverable(pos), shape(size)
 {
     shape.setPosition(pos);
     if (centered)
@@ -142,13 +147,13 @@ void Rectangle::draw() const
 
 void Rectangle::setPosition(sf::Vector2f newPos)
 {
-    Sprite::setPosition(newPos);
+    Hoverable::setPosition(newPos);
     shape.setPosition(newPos);
 }
 
 void Rectangle::setFillColor(sf::Color newColor)
 {
-    Sprite::setFillColor(newColor);
+    Hoverable::setFillColor(newColor);
     if (!hovering)
     {
         shape.setFillColor(newColor);
@@ -157,14 +162,19 @@ void Rectangle::setFillColor(sf::Color newColor)
 
 void Rectangle::setHoverColor(sf::Color newColor)
 {
-    Sprite::setHoverColor(newColor);
+    Hoverable::setHoverColor(newColor);
     if (hovering)
     {
         shape.setFillColor(newColor);
     }
 }
 
-bool Rectangle::touches(sf::Vector2f mousePos)
+sf::RectangleShape& Rectangle::getShape()
+{
+    return shape;
+}
+
+bool Rectangle::touches(sf::Vector2f mousePos) const
 {
     return shape.getGlobalBounds().contains(mousePos);
 }
@@ -196,10 +206,17 @@ Button::Button(sf::Vector2f pos, sf::Vector2f size, std::function<void()> callba
     text.setOrigin(text.getLocalBounds().getCenter());
 }
 
+void Button::setPosition(sf::Vector2f newPos)
+{
+    Rectangle::setPosition(newPos);
+    text.setPosition(shape.getGlobalBounds().getCenter());
+}
+
 void Button::setTextColor(sf::Color color)
 {
     text.setFillColor(color);
 }
+
 void Button::setCharacterSize(unsigned size)
 {
     text.setCharacterSize(size);
@@ -221,4 +238,6 @@ bool Button::onLeftClick()
         callback();
     }
     return hovering;
+}
+
 }

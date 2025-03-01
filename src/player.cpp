@@ -3,23 +3,32 @@
 #include "player.hpp"
 #include "unit.hpp"
 
-Player::Player(std::string const& name, size_t index, Tile* startTile)
+namespace silver
+{
+
+Player::Player(std::string const& name, size_t index, BoardTile* startTile)
     : name(name), index(index), color(playerColors[index]), startTile(startTile)
 {
-    pieces.push_back(Piece::create(PieceType::Man, this, startTile));
-    /*
-    for (size_t i = 0; i < 10; ++i)
+    for (auto i = 0u; i < Piece::numPieces; ++i)
     {
-        pieces.emplace_back(name, color, startTile);
+        auto& pieceType = Piece::pieces[i];
+        menuPieces[pieceType] = Piece::create(pieceType, this);
     }
-        */
+
+    pieces.push_back(Piece::create(PieceType::Man, this));
+    pieces[0]->setTile(startTile);
 }
 
 Player::~Player()
 {
-    for (auto i = 0u; i < pieces.size(); ++i)
+    for (auto& piece : pieces)
     {
-        delete pieces[i];
+        delete piece;
+    }
+
+    for (auto& [pieceType, piece] : menuPieces)
+    {
+        delete piece;
     }
 }
 
@@ -44,4 +53,21 @@ sf::Color const& Player::getColor() const
 std::string const& Player::getName() const
 {
     return name;
+}
+
+Piece* Player::getMenuPiece(PieceType pieceType)
+{
+    return menuPieces[pieceType];
+}
+
+int Player::getGold() const
+{
+    return gold;
+}
+
+int Player::getFood() const
+{
+    return food;
+}
+
 }

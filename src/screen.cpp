@@ -1,5 +1,8 @@
 #include "screen.hpp"
 
+namespace silver
+{
+
 Screen::Screen()
 {
     window.setVerticalSyncEnabled(true);
@@ -56,4 +59,6 @@ void Screen::setMainView()
 void Screen::setUIView()
 {
     window.setView(uiView);
+}
+
 }

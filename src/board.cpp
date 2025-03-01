@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <functional>
 #include <iostream>
 #include <cmath>
 #include <deque>
@@ -6,24 +7,33 @@
 #include "action.hpp"
 #include "game.hpp"
 
+namespace silver
+{
+
 Board::Board(size_t depth)
     : depth(depth)
 {
-    tiles.reserve(Tile::tileSides * std::pow(2, depth) * 2);
+    construct();
+}
+
+void Board::construct()
+{
+    tiles.reserve(BoardTile::tileSides * std::pow(2, depth) * 2);
+    tiles.clear();
     tiles.emplace_back(sf::Vector2f(0.f, 0.f), 0);
-    std::deque<Tile*> tileQueue;
+    std::deque<BoardTile*> tileQueue;
     tileQueue.push_back(&tiles.front());
 
     while (!tileQueue.empty())
     {
         auto& tile = tileQueue.front();
-        for (size_t i = 0; i < 6; ++i)//tile->depth - 1 == depth ? 1 : 6; ++i)
+        for (size_t i = 0; i < BoardTile::tileSides; ++i)
         {
             if (!tile->hasNeighbor(i))
             {
                 assert(tiles.capacity() > tiles.size());
                 auto& newTile = tiles.emplace_back(tile->getNeigborPosition(i), tile->depth + 1);
-                tile->setNeighbor(i, newTile);
+                tile->setNewNeighbor(i, &newTile);
                 if (newTile.depth < depth)
                 {
                     tileQueue.push_back(&newTile);
@@ -42,33 +52,18 @@ void Board::draw() const
     }
 }
 
-bool Board::onMouseMoved(sf::Vector2f mousePosition)
+bool Board::onMouseMoved(sf::Vector2f mousePos)
 {
-    if (hovering != nullptr)
+    if (nullptr != hovering && hovering->onMouseMoved(mousePos))
     {
-        if (hovering->touches(mousePosition))
-        {
-            return true;
-        }
-
-        hovering->offHover();
-        for (auto tile : hovering->neighbors)
-        {
-            if (tile != nullptr && tile->touches(mousePosition))
-            {
-                tile->onHover();
-                hovering = tile;
-                return true;
-            }
-        }
-        hovering = nullptr;
+        return true;
     }
+    hovering = nullptr;
 
     for (auto& tile : tiles)
     {
-        if (tile.touches(mousePosition))
+        if (tile.onMouseMoved(mousePos))
         {
-            tile.onHover();
             hovering = &tile;
             return true;
         }
@@ -85,40 +80,49 @@ bool Board::onLeftClick()
         selected = nullptr;
     }
 
-    if (nullptr != hovering)
+    if (nullptr != hovering && hovering->onLeftClick())
     {
         selected = hovering;
-        selected->onSelect();
+        Game::submit(SelectAction(selected));
     }
 
-    Game::submit(SelectAction(selected));
-    return selected != nullptr;
+    return hovering != nullptr;
 }
 
 bool Board::onRightClick()
 {
-    if (nullptr == hovering || nullptr == selected)
+    if (nullptr != selected)
     {
-        return false;
+        if (nullptr != hovering && hovering->onRightClick())
+        {
+            Game::submit(MoveAction(selected, hovering));
+        }
+
+        selected->offSelect();
+        selected = nullptr;
     }
 
-    Game::submit(MoveAction(selected, hovering));
-    selected->offSelect();
-    selected = nullptr;
-    return true;
+    return hovering != nullptr;
 }
 
-Tile* Board::center()
+bool Board::touches(sf::Vector2f mousePos) const
+{
+    return std::any_of(tiles.cbegin(), tiles.cend(), std::bind(BoardTile::touches, std::placeholders::_1, mousePos));
+}
+
+BoardTile* Board::center()
 {
     return &tiles.front();
 }
 
-Tile* Board::getStartPos(size_t index)
+BoardTile* Board::getStartPos(size_t index)
 {
-    Tile* tile = center();
+    auto tile = center();
     for (size_t i = 0; i < depth - 2u; ++i)
     {
         tile = tile->neighbors[index];
     }
     return tile;
+}
+
 }

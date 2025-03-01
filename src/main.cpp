@@ -7,7 +7,7 @@
 int main()
 {
     std::srand(std::time({}));
-    auto& game = Game::get();
+    auto& game = silver::Game::get();
     game.run(3u);
     return 0;
 }
@@ -16,8 +16,9 @@ int main()
 /*
 int main()
 {
- sf::Image image;
-    if (!image.loadFromFile("assets/farm.png"))
+    std::string const name{"man"};
+    sf::Image image;
+    if (!image.loadFromFile("assets/" + name + ".png"))
     {
         return -1;
     }
@@ -34,7 +35,7 @@ int main()
         }
     }
 
-    if (!image.saveToFile("assets/farm_white.png"))
+    if (!image.saveToFile("assets/" + name + "_white.png"))
     {
         return -1;
     }

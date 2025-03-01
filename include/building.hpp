@@ -4,13 +4,16 @@
 #include <set>
 #include "piece.hpp"
 
+namespace silver
+{
+
 class Building: public Piece
 {
 public:
     using Piece::Piece;
 
-    bool validMove(Tile* newTile) const override;
-    void move(Tile* tile) override;
+    bool validMove(BoardTile* newTile) const override;
+    void move(BoardTile* tile) override;
     void reset() override;
 
 protected:
@@ -19,9 +22,14 @@ protected:
 class City: public Building
 {
 public:
-    City(Player* player, Tile* tile);
+    City(Player* player);
 
     std::set<PieceType> buildable() const override;
+
+    static constexpr PieceType type{PieceType::City};  
+    static constexpr PieceCost cost{5, 5};
 };
+
+}
 
 #endif

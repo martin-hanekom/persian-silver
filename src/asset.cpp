@@ -1,26 +1,31 @@
 #include "asset.hpp"
 
+namespace silver
+{
+
 Asset& Asset::get()
 {
     static Asset asset;
     return asset;
 }
 
-sf::Texture& Asset::getTexture(std::string const& name)
+sf::Texture const& Asset::getTexture(std::string const& type)
 {
     auto& textures = get().textures;
-    if (textures.find(name) == textures.end())
+    if (textures.find(type) == textures.cend())
     {
-        textures[name] = sf::Texture(std::string(texturePath) + "/" + name + ".png");
-        auto& texture = textures[name];
-        texture.setSmooth(true);
+        textures[type] = sf::Texture(std::string(texturePath) + "/" + type + ".png");
+        auto& texture = textures[type];
+        //texture.setSmooth(true);
     }
 
-    return textures[name];
+    return textures[type];
 }
 
 sf::Font& Asset::getFont()
 {
     static sf::Font font("assets/arial.ttf");
     return font;
+}
+
 }

@@ -3,6 +3,9 @@
 #include "game.hpp"
 #include "asset.hpp"
 
+namespace silver
+{
+
 Game::Game(): screen(Screen::get()), board(tileDepth) 
 {
     players.reserve(Player::maxPlayers);
@@ -132,7 +135,8 @@ void Game::onMouseWheelScrolled(sf::Event::MouseWheelScrolled const& mouseScroll
 void Game::submit(SelectAction&& action)
 {
     auto& game = Game::get();
-    game.info.setPiece(action.getPiece());
+    auto piece = action.getPiece();
+    game.info.setPiece(game.isCurrentPlayerPiece(piece) ? piece : nullptr);
 }
 
 void Game::submit(MoveAction&& action)
@@ -141,16 +145,21 @@ void Game::submit(MoveAction&& action)
     if (action.valid())
     {
         auto piece = action.getPiece();
-        if (game.isCurrentPlayerPiece(*piece))
+        if (game.isCurrentPlayerPiece(piece))
         {
             piece->move(action.to);
         }
     }
 }
 
-bool Game::isCurrentPlayerPiece(Piece const& piece) const
+void Game::submit(BuildAction&& action)
 {
-    return piece.isPlayer(players[currentPlayer]);
+    
+}
+
+bool Game::isCurrentPlayerPiece(Piece const* const piece) const
+{
+    return nullptr != piece && piece->isPlayer(players[currentPlayer]);
 }
 
 void Game::nextPlayerCallback()
@@ -165,4 +174,7 @@ void Game::nextPlayer()
 
     currentPlayer = (currentPlayer + 1) % players.size();
     info.setPlayer(players[currentPlayer]);
+    info.setPiece(nullptr);
+}
+
 }

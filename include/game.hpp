@@ -8,6 +8,9 @@
 #include "action.hpp"
 #include "info.hpp"
 
+namespace silver
+{
+
 class Game
 {
 public:
@@ -30,11 +33,11 @@ public:
 
     static void submit(SelectAction&& action);
     static void submit(MoveAction&& action);
+    static void submit(BuildAction&& action);
 
     static void nextPlayerCallback();
     void nextPlayer();
-
-    bool isCurrentPlayerPiece(Piece const& piece) const;
+    bool isCurrentPlayerPiece(Piece const* const piece) const;
 
     static constexpr size_t tileDepth = 7u;
 
@@ -51,5 +54,7 @@ private:
     sf::Vector2f mouseClickPosition;
     bool mouseDragging = false;
 };
+
+}
 
 #endif

@@ -3,34 +3,50 @@
 namespace silver
 {
 
-Action::Action(ActionType type, Tile* tile) : type(type), tile(tile)
+Action::Action(ActionType type) : type(type)
 {
 }
 
-bool Action::valid() const
+SelectAction::SelectAction(BoardTile* tile) : Action(ActionType::Select), tile(tile)
+{
+}
+
+bool SelectAction::valid() const
 {
     return nullptr != tile && tile->hasPiece();
 }
 
-Piece* Action::getPiece()
+Piece* SelectAction::getPiece()
 {
     return nullptr == tile ? nullptr : tile->getPiece();
 }
 
-SelectAction::SelectAction(Tile* tile) : Action(ActionType::Select, tile)
+MoveAction::MoveAction(BoardTile* from, BoardTile* to) : Action(ActionType::Move), from(from), to(to)
 {
 }
 
-MoveAction::MoveAction(Tile* tile) : Action(ActionType::Move, tile)
+bool MoveAction::valid() const
+{
+    return nullptr != from && nullptr != to && from->hasPiece() && from->getPiece()->validMove(to);
+}
+
+Piece* MoveAction::getPiece()
+{
+    return nullptr == from ? nullptr : from->getPiece();
+}
+
+BuildAction::BuildAction(MenuTile* tile) : Action(ActionType::Build), tile(tile)
 {
 }
 
-FightAction::FightAction(Tile* tile) : Action(ActionType::Fight, tile)
+bool BuildAction::valid() const
 {
+    return nullptr != tile && tile->hasPiece();
 }
 
-BuildAction::BuildAction(Tile* tile) : Action(ActionType::Build, tile)
+Piece* BuildAction::getPiece()
 {
+    return nullptr == tile ? nullptr : tile->getPiece();
 }
 
 }

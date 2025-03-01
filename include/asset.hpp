@@ -3,6 +3,11 @@
 
 #include <unordered_map>
 #include <SFML/Graphics.hpp>
+#include "piece.hpp"
+#include "resource.hpp"
+
+namespace silver
+{
 
 class Asset
 {
@@ -13,7 +18,8 @@ public:
     Asset& operator=(Asset&&) = delete;
 
     static Asset& get();
-    static sf::Texture& getTexture(std::string const& name);
+
+    static sf::Texture const& getTexture(std::string const& type);
     static sf::Font& getFont();
 
 private:
@@ -24,5 +30,7 @@ private:
 
     std::unordered_map<std::string, sf::Texture> textures;
 };
+
+}
 
 #endif
