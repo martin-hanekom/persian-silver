@@ -42,4 +42,9 @@ std::set<PieceType> Man::buildable() const
     return {PieceType::City};
 }
 
+PieceCost const& Man::getCost() const
+{
+    return cost;
+}
+
 }

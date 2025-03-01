@@ -46,6 +46,7 @@ public:
     Tile* getTile();
     std::string const& getName() const;
     void setSize(float width);
+    virtual PieceCost const& getCost() const = 0;
 
     virtual bool validMove(BoardTile* tile) const = 0;
     virtual void move(BoardTile* tile) = 0;

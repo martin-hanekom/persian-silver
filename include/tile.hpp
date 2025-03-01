@@ -14,7 +14,7 @@ namespace silver
 class Tile
 {
 public:
-    void setPiece(Piece* piece);
+    virtual void setPiece(Piece* piece);
     Piece* getPiece();
     bool hasPiece() const;
     bool isPiece(Piece* piece) const;
@@ -95,6 +95,7 @@ class MenuTile: public Tile, public Rectangle
 public:
     MenuTile(sf::Vector2f pos = {0.f, 0.f});
 
+    void setPiece(Piece* piece) override;
     sf::Vector2f getPosition() const override;
     float getPieceWidth() const override;
     void draw() const override;

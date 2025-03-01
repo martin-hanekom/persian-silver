@@ -26,6 +26,7 @@ public:
     Man(Player* player);
 
     std::set<PieceType> buildable() const override;
+    PieceCost const& getCost() const;
 
     static constexpr PieceType type{PieceType::Man};  
     static constexpr PieceCost cost{1, 1};
