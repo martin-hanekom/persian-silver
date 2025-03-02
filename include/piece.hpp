@@ -20,12 +20,15 @@ enum class PieceType
 class PieceCost
 {
 public:
-    constexpr PieceCost(int gold, int food) : gold(gold), food(food)
+    constexpr PieceCost(int gold, int food, int goldTax, int foodTax) :
+        gold(gold), food(food), goldTax(goldTax), foodTax(foodTax)
     {
     }
 
-    int const gold;
-    int const food;
+    int gold;
+    int food;
+    int goldTax;
+    int foodTax;
 };
 
 class Piece

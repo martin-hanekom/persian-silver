@@ -22,10 +22,15 @@ PlayerInfo::PlayerInfo(sf::Vector2f pos, float width) :
     goldTile.setResource(Resource::create(ResourceType::Gold));
     foodTile.setResource(Resource::create(ResourceType::Food));
 
-    goldText.setPosition(goldTile.getPosition() + sf::Vector2f{glyphRadius + padding.x, -glyphRadius});
-    goldText.setFillColor(sf::Color::Black);
-    foodText.setPosition(foodTile.getPosition() + sf::Vector2f{glyphRadius + padding.x, -glyphRadius});
-    foodText.setFillColor(sf::Color::Black);
+    gold.setPosition(goldTile.getPosition() + sf::Vector2f{glyphRadius + padding.x, -glyphRadius});
+    gold.setFillColor(sf::Color::Black);
+    goldTax.setPosition(goldTile.getPosition() + sf::Vector2f{glyphRadius + padding.x + 50.f, -glyphRadius});
+    goldTax.setFillColor(sf::Color::Black);
+
+    food.setPosition(foodTile.getPosition() + sf::Vector2f{glyphRadius + padding.x, -glyphRadius});
+    food.setFillColor(sf::Color::Black);
+    foodTax.setPosition(foodTile.getPosition() + sf::Vector2f{glyphRadius + padding.x + 50.f, -glyphRadius});
+    foodTax.setFillColor(sf::Color::Black);
 }
 
 void PlayerInfo::setPlayer(Player const& player)
@@ -34,8 +39,10 @@ void PlayerInfo::setPlayer(Player const& player)
     playerName.setString(player.getName());
 
     auto const& resources = player.getResources();
-    goldText.setString(std::to_string(resources.gold));
-    foodText.setString(std::to_string(resources.food));
+    gold.setString(std::to_string(resources.gold));
+    goldTax.setString(std::to_string(resources.goldTax));
+    food.setString(std::to_string(resources.food));
+    foodTax.setString(std::to_string(resources.foodTax));
 }
 
 void PlayerInfo::draw() const
@@ -44,8 +51,10 @@ void PlayerInfo::draw() const
     Screen::draw(playerName);
     goldTile.draw();
     foodTile.draw();
-    Screen::draw(goldText);
-    Screen::draw(foodText);
+    Screen::draw(gold);
+    Screen::draw(goldTax);
+    Screen::draw(food);
+    Screen::draw(foodTax);
 }
 
 PieceInfo::PieceInfo(sf::Vector2f pos, float width) :

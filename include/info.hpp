@@ -37,8 +37,10 @@ private:
     sf::Text playerName{Asset::getFont(), ""};
     Glyph goldTile;
     Glyph foodTile;
-    sf::Text goldText{Asset::getFont(), "0"};
-    sf::Text foodText{Asset::getFont(), "0"};
+    sf::Text gold{Asset::getFont(), ""};
+    sf::Text goldTax{Asset::getFont(), ""};
+    sf::Text food{Asset::getFont(), ""};
+    sf::Text foodTax{Asset::getFont(), ""};
 };
 
 class PieceInfo : public Rectangle

@@ -24,7 +24,7 @@ public:
     PieceType getType() const;
 
     static constexpr PieceType type{PieceType::City};  
-    static constexpr PieceCost cost{5, 5};
+    static constexpr PieceCost cost{10, 10, 2, 2};
 };
 
 }

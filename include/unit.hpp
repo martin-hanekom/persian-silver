@@ -25,7 +25,7 @@ public:
     PieceType getType() const override;
 
     static constexpr PieceType type{PieceType::Man};  
-    static constexpr PieceCost cost{1, 1};
+    static constexpr PieceCost cost{1, 1, 0, 0};
 };
 
 }

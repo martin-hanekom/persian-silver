@@ -45,6 +45,8 @@ void Player::reset()
     {
         piece->reset();
     }
+    resources.gold += resources.goldTax;
+    resources.food += resources.foodTax;
 }
 
 sf::Color const& Player::getColor() const
@@ -64,20 +66,22 @@ Piece* Player::getMenuPiece(PieceType pieceType)
 
 PieceCost const Player::getResources() const
 {
-    return PieceCost(gold, food);
+    return resources;
 }
 
 bool Player::affords(Piece* piece) const
 {
     auto const cost = piece->getCost();
-    return gold >= cost.gold && food >= cost.food;
+    return resources.gold >= cost.gold && resources.food >= cost.food;
 }
 
 Piece* Player::buy(PieceType type, Tile* tile)
 {
     auto const cost = Piece::cost(type);
-    gold -= cost.gold;
-    food -= cost.food;
+    resources.gold -= cost.gold;
+    resources.food -= cost.food;
+    resources.goldTax += cost.goldTax;
+    resources.foodTax += cost.foodTax;
     pieces.push_back(Piece::create(type, this));
     auto& piece = pieces[pieces.size()-1];
     piece->setTile(tile);

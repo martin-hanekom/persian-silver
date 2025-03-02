@@ -119,8 +119,10 @@ public:
 protected:
     Glyph goldTile;
     Glyph foodTile;
-    sf::Text goldText{Asset::getFont(), ""};
-    sf::Text foodText{Asset::getFont(), ""};
+    sf::Text goldBuild{Asset::getFont(), ""};
+    sf::Text goldTax{Asset::getFont(), ""};
+    sf::Text foodBuild{Asset::getFont(), ""};
+    sf::Text foodTax{Asset::getFont(), ""};
     bool selected = false;
 };
 

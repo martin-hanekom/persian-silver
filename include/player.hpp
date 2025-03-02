@@ -33,7 +33,7 @@ public:
     static constexpr sf::Color playerColors[maxPlayers] = {
         sf::Color(0, 0, 128, 255),
         sf::Color(128, 0, 0, 255),
-        sf::Color(204, 132, 0, 255),
+        sf::Color(57, 170, 170)
     };
 
 protected:
@@ -43,9 +43,7 @@ protected:
     BoardTile* startTile;
     std::vector<Piece*> pieces;
     std::unordered_map<PieceType, Piece*> menuPieces;
-
-    int gold{startGold};
-    int food{startFood};
+    PieceCost resources{startGold, startFood, 0, 0};
 };
 
 }

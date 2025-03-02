@@ -166,8 +166,10 @@ MenuTile::MenuTile(sf::Vector2f pos) :
 
     goldTile.setResource(Resource::create(ResourceType::Gold));
     foodTile.setResource(Resource::create(ResourceType::Food));
-    goldText.setFillColor(sf::Color::Black);
-    foodText.setFillColor(sf::Color::Black);
+    goldBuild.setFillColor(sf::Color::Black);
+    foodBuild.setFillColor(sf::Color::Black);
+    goldTax.setFillColor(sf::Color::Black);
+    foodTax.setFillColor(sf::Color::Black);
 }
 
 sf::Vector2f MenuTile::getPosition() const
@@ -186,9 +188,11 @@ void MenuTile::setPiece(Piece* piece)
     Tile::setPiece(piece);
     if (nullptr != piece)
     {
-        auto const& pieceCost = piece->getCost();
-        goldText.setString(std::to_string(pieceCost.gold));
-        foodText.setString(std::to_string(pieceCost.food));
+        auto const& cost = piece->getCost();
+        goldBuild.setString(std::to_string(cost.gold));
+        foodBuild.setString(std::to_string(cost.food));
+        goldTax.setString("(" + std::to_string(cost.gold) + ")");
+        foodTax.setString("(" + std::to_string(cost.foodTax) + ")");
     }
 }
 
@@ -200,8 +204,10 @@ void MenuTile::draw() const
         piece->draw();
         goldTile.draw();
         foodTile.draw();
-        Screen::draw(goldText);
-        Screen::draw(foodText);
+        Screen::draw(goldBuild);
+        Screen::draw(foodBuild);
+        //Screen::draw(goldTax);
+        //Screen::draw(foodTax);
     }
 }
 
@@ -253,8 +259,8 @@ void MenuTile::setPosition(sf::Vector2f pos)
     Rectangle::setPosition(pos);
     goldTile.setPosition(pos + sf::Vector2f{tileHalfSize + glyphRadius + padding.x, -glyphRadius - padding.y});
     foodTile.setPosition(pos + sf::Vector2f{tileHalfSize + glyphRadius + padding.x, glyphRadius + padding.y});
-    goldText.setPosition(goldTile.getPosition() + sf::Vector2f{glyphRadius + padding.x, -glyphRadius});
-    foodText.setPosition(foodTile.getPosition() + sf::Vector2f{glyphRadius + padding.x, -glyphRadius});
+    goldBuild.setPosition(goldTile.getPosition() + sf::Vector2f{glyphRadius + padding.x, -glyphRadius});
+    foodBuild.setPosition(foodTile.getPosition() + sf::Vector2f{glyphRadius + padding.x, -glyphRadius});
 }
 
 Glyph::Glyph(sf::Vector2f pos, float radius) : Circle(pos, radius, tileSides, true)
