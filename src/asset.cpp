@@ -16,7 +16,7 @@ sf::Texture const& Asset::getTexture(std::string const& type)
     {
         textures[type] = sf::Texture(std::string(texturePath) + "/" + type + ".png");
         auto& texture = textures[type];
-        //texture.setSmooth(true);
+        texture.setSmooth(true);
     }
 
     return textures[type];

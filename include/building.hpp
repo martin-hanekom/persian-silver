@@ -12,10 +12,6 @@ class Building: public Piece
 public:
     using Piece::Piece;
 
-    bool validMove(BoardTile* newTile) const override;
-    void move(BoardTile* tile) override;
-    void reset() override;
-
 protected:
 };
 
@@ -25,7 +21,7 @@ public:
     City(Player* player);
 
     std::set<PieceType> buildable() const override;
-    PieceCost const& getCost() const;
+    PieceType getType() const;
 
     static constexpr PieceType type{PieceType::City};  
     static constexpr PieceCost cost{5, 5};

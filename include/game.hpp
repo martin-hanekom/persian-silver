@@ -7,6 +7,7 @@
 #include "player.hpp"
 #include "action.hpp"
 #include "info.hpp"
+#include "tile.hpp"
 
 namespace silver
 {
@@ -31,13 +32,16 @@ public:
     void onMouseButtonPressed(sf::Event::MouseButtonPressed const& mouseButton);
     void onMouseWheelScrolled(sf::Event::MouseWheelScrolled const& mouseScroll);
 
-    static void submit(SelectAction&& action);
+    static void submit(BoardSelectAction&& action);
+    static void submit(MenuSelectAction&& action);
     static void submit(MoveAction&& action);
     static void submit(BuildAction&& action);
 
     static void nextPlayerCallback();
     void nextPlayer();
     bool isCurrentPlayerPiece(Piece const* const piece) const;
+    Player const& getPlayer() const;
+    Player& getPlayer();
 
     static constexpr size_t tileDepth = 7u;
 

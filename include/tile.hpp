@@ -102,10 +102,16 @@ public:
     bool onLeftClick() override;
     void setPosition(sf::Vector2f pos) override;
 
+    void onHover();
+    void offHover();
+    void onSelect();
+    void offSelect();
+
     static constexpr float tileSize = 90.f;
     static constexpr float tileHalfSize = tileSize / 2.f;
     static constexpr sf::Color tileColor{80, 92, 95};
     static constexpr sf::Color defaultHoverColor{85, 97, 100};
+    static constexpr sf::Color selectColor{sf::Color::Magenta};
     static constexpr float glyphRadius = 20.f;
     static constexpr float glyphDiameter = 20.f;
     static constexpr sf::Vector2f padding{10.f, 2.f};
@@ -115,6 +121,7 @@ protected:
     Glyph foodTile;
     sf::Text goldText{Asset::getFont(), ""};
     sf::Text foodText{Asset::getFont(), ""};
+    bool selected = false;
 };
 
 }

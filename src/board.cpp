@@ -83,7 +83,7 @@ bool Board::onLeftClick()
     if (nullptr != hovering && hovering->onLeftClick())
     {
         selected = hovering;
-        Game::submit(SelectAction(selected));
+        Game::submit(BoardSelectAction(selected));
     }
 
     return hovering != nullptr;
@@ -95,7 +95,16 @@ bool Board::onRightClick()
     {
         if (nullptr != hovering && hovering->onRightClick())
         {
-            Game::submit(MoveAction(selected, hovering));
+            if (nullptr != menuSelected)
+            {
+                Game::submit(BuildAction(selected, menuSelected, hovering));
+                menuSelected->offSelect();
+                menuSelected = nullptr;
+            }
+            else
+            {
+                Game::submit(MoveAction(selected, hovering));
+            }
         }
 
         selected->offSelect();

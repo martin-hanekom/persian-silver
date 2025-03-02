@@ -2,14 +2,16 @@
 #include "player.hpp"
 #include "unit.hpp"
 #include "asset.hpp"
-#include "util.hpp"
 
 namespace silver
 {
 
 bool Unit::validMove(BoardTile* newTile) const
 {
-    return energy && nullptr != newTile && !newTile->hasPiece() && static_cast<BoardTile*>(tile)->isNeighbor(newTile);
+    return energy &&
+        nullptr != newTile &&
+        !newTile->hasPiece() &&
+        static_cast<BoardTile*>(tile)->isNeighbor(newTile);
 }
 
 void Unit::move(BoardTile* newTile)
@@ -18,18 +20,7 @@ void Unit::move(BoardTile* newTile)
     tile = newTile;
     tile->setPiece(this);
     sprite.setPosition(tile->getPosition());
-
-    energy = false;
-    sprite.setColor(opaque(sprite.getColor(), 128u));
-}
-
-void Unit::reset()
-{
-    if (!energy)
-    {
-        sprite.setColor(opaque(sprite.getColor(), 255u));
-    }
-    energy = true;
+    setEnergy(false);
 }
 
 Man::Man(Player* player)
@@ -42,9 +33,9 @@ std::set<PieceType> Man::buildable() const
     return {PieceType::City};
 }
 
-PieceCost const& Man::getCost() const
+PieceType Man::getType() const
 {
-    return cost;
+    return type;
 }
 
 }

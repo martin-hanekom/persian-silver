@@ -2,13 +2,15 @@
 #define PERSIAN_SILVER_ACTION_HPP
 
 #include "tile.hpp"
+#include "player.hpp"
 
 namespace silver
 {
 
 enum class ActionType
 {
-    Select,
+    BoardSelect,
+    MenuSelect,
     Move,
     Fight,
     Build
@@ -19,21 +21,32 @@ class Action
 public:
     Action(ActionType type);
 
-    virtual bool valid() const = 0;
+    virtual bool valid(Player const& player) const = 0;
     virtual Piece* getPiece() = 0;
 
     ActionType type;
 };
 
-class SelectAction : public Action
+class BoardSelectAction : public Action
 {
 public:
-    SelectAction(BoardTile* tile);
+    BoardSelectAction(BoardTile* tile);
 
-    bool valid() const override;
+    bool valid(Player const& player) const override;
     Piece* getPiece() override;
 
     BoardTile* tile;
+};
+
+class MenuSelectAction: public Action
+{
+public:
+    MenuSelectAction(MenuTile* tile);
+
+    bool valid(Player const& player) const override;
+    Piece* getPiece() override;
+
+    MenuTile* tile;
 };
 
 class MoveAction : public Action
@@ -41,7 +54,7 @@ class MoveAction : public Action
 public:
     MoveAction(BoardTile* from, BoardTile* to);
 
-    bool valid() const override;
+    bool valid(Player const& player) const override;
     Piece* getPiece() override;
 
     BoardTile* from;
@@ -51,12 +64,15 @@ public:
 class BuildAction : public Action
 {
 public:
-    BuildAction(MenuTile* tile);
+    BuildAction(BoardTile* builder, MenuTile* menuTile, BoardTile* location);
 
-    bool valid() const override;
+    bool valid(Player const& player) const override;
     Piece* getPiece() override;
+    PieceType getPieceType() const;
 
-    MenuTile* tile;
+    BoardTile* builder;
+    MenuTile* menuItem;
+    BoardTile* location;
 };
 
 }

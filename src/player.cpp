@@ -16,7 +16,9 @@ Player::Player(std::string const& name, size_t index, BoardTile* startTile)
     }
 
     pieces.push_back(Piece::create(PieceType::Man, this));
-    pieces[0]->setTile(startTile);
+    auto& piece = pieces[0];
+    piece->setTile(startTile);
+    piece->setEnergy(true);
 }
 
 Player::~Player()
@@ -60,14 +62,26 @@ Piece* Player::getMenuPiece(PieceType pieceType)
     return menuPieces[pieceType];
 }
 
-int Player::getGold() const
+PieceCost const Player::getResources() const
 {
-    return gold;
+    return PieceCost(gold, food);
 }
 
-int Player::getFood() const
+bool Player::affords(Piece* piece) const
 {
-    return food;
+    auto const cost = piece->getCost();
+    return gold >= cost.gold && food >= cost.food;
+}
+
+Piece* Player::buy(PieceType type, Tile* tile)
+{
+    auto const cost = Piece::cost(type);
+    gold -= cost.gold;
+    food -= cost.food;
+    pieces.push_back(Piece::create(type, this));
+    auto& piece = pieces[pieces.size()-1];
+    piece->setTile(tile);
+    return piece;
 }
 
 }

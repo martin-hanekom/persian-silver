@@ -132,29 +132,38 @@ void Game::onMouseWheelScrolled(sf::Event::MouseWheelScrolled const& mouseScroll
     }
 }
 
-void Game::submit(SelectAction&& action)
+void Game::submit(BoardSelectAction&& action)
 {
     auto& game = Game::get();
-    auto piece = action.getPiece();
-    game.info.setPiece(game.isCurrentPlayerPiece(piece) ? piece : nullptr);
+    game.info.setPiece(action.valid(game.getPlayer()) ? action.getPiece() : nullptr);
+}
+
+void Game::submit(MenuSelectAction&& action)
+{
+    auto& game = Game::get();
+    game.board.menuSelected = action.valid(game.getPlayer()) ? action.tile : nullptr;
 }
 
 void Game::submit(MoveAction&& action)
 {
     auto& game = Game::get();
-    if (action.valid())
+    if (action.valid(game.getPlayer()))
     {
-        auto piece = action.getPiece();
-        if (game.isCurrentPlayerPiece(piece))
-        {
-            piece->move(action.to);
-        }
+        action.getPiece()->move(action.to);
     }
+    game.info.setPiece(nullptr);
 }
 
 void Game::submit(BuildAction&& action)
 {
-    
+    auto& game = Game::get();
+    auto& player = game.getPlayer();
+    if (action.valid(player))
+    {
+        action.getPiece()->build(action.getPieceType(), action.location);
+        game.info.setPlayer(player);
+    }
+    game.info.setPiece(nullptr);
 }
 
 bool Game::isCurrentPlayerPiece(Piece const* const piece) const
@@ -175,6 +184,16 @@ void Game::nextPlayer()
     currentPlayer = (currentPlayer + 1) % players.size();
     info.setPlayer(players[currentPlayer]);
     info.setPiece(nullptr);
+}
+
+Player const& Game::getPlayer() const
+{
+    return players[currentPlayer];
+}
+
+Player& Game::getPlayer()
+{
+    return players[currentPlayer];
 }
 
 }

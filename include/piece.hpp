@@ -36,6 +36,7 @@ public:
 
     static Piece* create(PieceType pieceType, Player* player);
     static std::string const& name(PieceType pieceType);
+    static PieceCost cost(PieceType type);
 
     void draw() const;
     void setTile(Tile* newTile);
@@ -46,11 +47,16 @@ public:
     Tile* getTile();
     std::string const& getName() const;
     void setSize(float width);
-    virtual PieceCost const& getCost() const = 0;
+    virtual PieceType getType() const = 0;
+    PieceCost getCost() const;
 
-    virtual bool validMove(BoardTile* tile) const = 0;
-    virtual void move(BoardTile* tile) = 0;
-    virtual void reset() = 0;
+    virtual bool validMove(BoardTile* location) const;
+    virtual void move(BoardTile* location);
+    bool validBuild(PieceType type, BoardTile* location) const;
+    void build(PieceType type, BoardTile* location);
+    virtual void reset();
+    void setEnergy(bool up);
+    bool hasEnergy() const;
     virtual std::set<PieceType> buildable() const = 0;
 
     static constexpr PieceType pieces[]{PieceType::Man, PieceType::City};
@@ -61,6 +67,7 @@ protected:
     sf::Sprite sprite;
     Player* player;
     Tile* tile;
+    bool energy = true;
 };
 
 }

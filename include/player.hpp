@@ -21,8 +21,9 @@ public:
     std::string const& getName() const;
     Piece* getMenuPiece(PieceType pieceType);
 
-    int getGold() const;
-    int getFood() const;
+    PieceCost const getResources() const;
+    bool affords(Piece* piece) const;
+    Piece* buy(PieceType type, Tile* tile);
 
     static constexpr size_t maxPlayers = 6u;
     static constexpr size_t minPlayers = 2u;
@@ -42,6 +43,7 @@ protected:
     BoardTile* startTile;
     std::vector<Piece*> pieces;
     std::unordered_map<PieceType, Piece*> menuPieces;
+
     int gold{startGold};
     int food{startFood};
 };

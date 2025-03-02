@@ -142,6 +142,7 @@ void BoardTile::offHover()
         shape.setFillColor(color);
     }
 }
+
 void BoardTile::onSelect()
 {
     selected = true;
@@ -181,6 +182,7 @@ float MenuTile::getPieceWidth() const
 
 void MenuTile::setPiece(Piece* piece)
 {
+    offSelect();
     Tile::setPiece(piece);
     if (nullptr != piece)
     {
@@ -205,11 +207,45 @@ void MenuTile::draw() const
 
 bool MenuTile::onLeftClick()
 {
-    if (hovering)
+    if (selected)
     {
-        Game::submit(BuildAction(this));
+        offSelect();
     }
+    else if (hovering)
+    {
+        onSelect();
+        Game::submit(MenuSelectAction(this));
+    }
+
     return hovering;
+}
+
+void MenuTile::onHover()
+{
+    if (!selected)
+    {
+        shape.setFillColor(hoverColor);
+    }
+}
+
+void MenuTile::offHover()
+{
+    if (!selected)
+    {
+        shape.setFillColor(color);
+    }
+}
+
+void MenuTile::onSelect()
+{
+    selected = true;
+    shape.setFillColor(selectColor);
+}
+
+void MenuTile::offSelect()
+{
+    selected = false;
+    shape.setFillColor(color);
 }
 
 void MenuTile::setPosition(sf::Vector2f pos)

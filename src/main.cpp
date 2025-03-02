@@ -3,20 +3,18 @@
 #include <SFML/Graphics.hpp>
 #include "game.hpp"
 
-///*
+int convertPic(std::string const& name);
+
 int main()
 {
     std::srand(std::time({}));
-    auto& game = silver::Game::get();
-    game.run(3u);
+    silver::Game::get().run(3u);
+    //convertPic("spearman");
     return 0;
 }
-//*/
 
-/*
-int main()
+int convertPic(std::string const& name)
 {
-    std::string const name{"man"};
     sf::Image image;
     if (!image.loadFromFile("assets/" + name + ".png"))
     {
@@ -28,7 +26,7 @@ int main()
     {
         for (unsigned int y = 0; y < size.y; ++y)
         {
-            if (image.getPixel({x, y}).a   != 0)
+            if (image.getPixel({x, y}).a > 70)
             {
                 image.setPixel({x, y}, sf::Color::White);
             }
@@ -42,4 +40,3 @@ int main()
 
     return 0;
 }
-    /**/

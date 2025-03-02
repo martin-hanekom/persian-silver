@@ -26,6 +26,7 @@ public:
 
     BoardTile* hovering = nullptr;
     BoardTile* selected = nullptr;
+    MenuTile* menuSelected = nullptr;
 
 private:
     void construct();

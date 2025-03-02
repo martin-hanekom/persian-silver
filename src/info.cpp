@@ -33,8 +33,9 @@ void PlayerInfo::setPlayer(Player const& player)
     icon.setFillColor(player.getColor());
     playerName.setString(player.getName());
 
-    goldText.setString(std::to_string(player.getGold()));
-    foodText.setString(std::to_string(player.getFood()));
+    auto const& resources = player.getResources();
+    goldText.setString(std::to_string(resources.gold));
+    foodText.setString(std::to_string(resources.food));
 }
 
 void PlayerInfo::draw() const
@@ -92,7 +93,7 @@ bool PieceInfo::onMouseMoved(sf::Vector2f mousePos)
 
 bool PieceInfo::onLeftClick()
 {
-    return false;
+    return nullptr != hovering && hovering->onLeftClick();
 }
 
 bool PieceInfo::onRightClick()
