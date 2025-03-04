@@ -141,7 +141,30 @@ void Game::submit(BoardSelectAction&& action)
 void Game::submit(MenuSelectAction&& action)
 {
     auto& game = Game::get();
-    game.board.menuSelected = action.valid(game.getPlayer()) ? action.tile : nullptr;
+    if (action.valid(game.getPlayer()))
+    {
+        auto const buildTile = game.board.selected;
+        auto const builder = buildTile->getPiece();
+        switch (builder->getBuildType())
+        {
+            case BuildType::Consume:
+                Game::submit(ConsumeBuildAction(buildTile, action.tile));
+                break;
+            case BuildType::Expand:
+                game.board.menuSelected = action.tile;
+                break;
+            default:
+                break;
+        }
+    }
+    else
+    {
+        if (nullptr != game.board.menuSelected)
+        {
+            game.board.menuSelected->offSelect();
+            game.board.menuSelected = nullptr;
+        }
+    }
 }
 
 void Game::submit(MoveAction&& action)
@@ -154,13 +177,25 @@ void Game::submit(MoveAction&& action)
     game.info.setPiece(nullptr);
 }
 
-void Game::submit(BuildAction&& action)
+void Game::submit(ExpandBuildAction&& action)
 {
     auto& game = Game::get();
     auto& player = game.getPlayer();
     if (action.valid(player))
     {
-        action.getPiece()->build(action.getPieceType(), action.location);
+        player.expand(action.getPieceType(), action.getPiece(), action.location);
+        game.info.setPlayer(player);
+    }
+    game.info.setPiece(nullptr);
+}
+
+void Game::submit(ConsumeBuildAction&& action)
+{
+    auto& game = Game::get();
+    auto& player = game.getPlayer();
+    if (action.valid(player))
+    {
+        player.consume(action.getPieceType(), action.getPiece());
         game.info.setPlayer(player);
     }
     game.info.setPiece(nullptr);

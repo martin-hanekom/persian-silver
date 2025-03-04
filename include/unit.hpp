@@ -12,6 +12,9 @@ class Unit : public Piece
 public:
     using Piece::Piece;
 
+    BuildType getBuildType() const override;
+    bool validBuild(PieceType type, BoardTile* location = nullptr) const override;
+
     bool validMove(BoardTile* newTile) const override;
     void move(BoardTile* tile) override;
 };

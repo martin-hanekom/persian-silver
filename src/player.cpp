@@ -15,20 +15,21 @@ Player::Player(std::string const& name, size_t index, BoardTile* startTile)
         menuPieces[pieceType] = Piece::create(pieceType, this);
     }
 
-    pieces.push_back(Piece::create(PieceType::Man, this));
-    auto& piece = pieces[0];
-    piece->setTile(startTile);
-    piece->setEnergy(true);
+    pieces.reserve(maxPieces);
+    add(PieceType::Man, startTile);
 }
 
 Player::~Player()
 {
-    for (auto& piece : pieces)
+    for (auto piece : pieces)
     {
-        delete piece;
+        if (nullptr != piece)
+        {
+            delete piece;
+        }
     }
 
-    for (auto& [pieceType, piece] : menuPieces)
+    for (auto [pieceType, piece] : menuPieces)
     {
         delete piece;
     }
@@ -36,17 +37,34 @@ Player::~Player()
 
 void Player::draw() const
 {
-    std::for_each(pieces.cbegin(), pieces.cend(), std::bind(&Piece::draw, std::placeholders::_1));
+    for (auto const piece : pieces)
+    {
+        if (nullptr != piece)
+        {
+            piece->draw();
+        }
+    }
 }
 
 void Player::reset()
 {
     for (auto& piece : pieces)
     {
-        piece->reset();
+        if (nullptr != piece)
+        {
+            piece->reset();
+        }
     }
     resources.gold += resources.goldTax;
     resources.food += resources.foodTax;
+}
+
+bool Player::hasPiece(PieceType type) const
+{
+    return std::any_of(pieces.cbegin(), pieces.cend(), [type](auto const* const piece)
+        {
+            return nullptr != piece && piece->getType() == type;
+        });
 }
 
 sf::Color const& Player::getColor() const
@@ -86,6 +104,54 @@ Piece* Player::buy(PieceType type, Tile* tile)
     auto& piece = pieces[pieces.size()-1];
     piece->setTile(tile);
     return piece;
+}
+
+Piece* Player::add(PieceType type, Tile* tile)
+{
+    auto piece = Piece::create(PieceType::Man, this);
+    piece->setTile(tile);
+
+    if (auto it = std::find(pieces.begin(), pieces.end(), nullptr); it != pieces.end())
+    {
+        *it = piece;
+    }
+    else
+    {
+        pieces.push_back(piece);
+    }
+
+    return piece;
+}
+
+void Player::remove(Piece* piece)
+{
+    if (nullptr == piece)
+    {
+        return;
+    }
+
+    piece->setTile(nullptr);
+    delete piece;
+
+    if (auto it = std::find(pieces.begin(), pieces.end(), piece); it != pieces.end())
+    {
+        *it = nullptr;
+    }
+}
+
+void Player::expand(PieceType type, Piece* builder, BoardTile* location)
+{
+    auto piece = buy(type, location);
+    builder->setEnergy(false);
+    piece->setEnergy(false);
+}
+
+void Player::consume(PieceType type, Piece* builder)
+{
+    auto location = builder->getTile();
+    remove(builder);
+    auto piece = buy(type, location);
+    piece->setEnergy(false);
 }
 
 }

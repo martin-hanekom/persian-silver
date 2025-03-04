@@ -57,27 +57,54 @@ Piece* MoveAction::getPiece()
     return nullptr == from ? nullptr : from->getPiece();
 }
 
-BuildAction::BuildAction(BoardTile* builder, MenuTile* menuItem, BoardTile* location) :
-    Action(ActionType::Build), builder(builder), menuItem(menuItem), location(location)
+ExpandBuildAction::ExpandBuildAction(BoardTile* builder, MenuTile* menuItem, BoardTile* location) :
+    Action(ActionType::ExpandBuild), builder(builder), menuItem(menuItem), location(location)
 {
 }
 
-bool BuildAction::valid(Player const& player) const
+bool ExpandBuildAction::valid(Player const& player) const
 {
-    auto piece = nullptr != builder ? builder->getPiece() : nullptr;
-    return piece != nullptr &&
-        menuItem->hasPiece() &&
-        piece->isPlayer(player) &&
-        piece->validBuild(menuItem->getPiece()->getType(), location) &&
+    auto builderPiece = nullptr != builder ? builder->getPiece() : nullptr;
+    auto piece = nullptr != menuItem ? menuItem->getPiece() : nullptr;
+    return builderPiece != nullptr &&
+        piece != nullptr &&
+        builderPiece->isPlayer(player) &&
+        builderPiece->validBuild(piece->getType(), location) &&
         player.affords(piece);
 }
 
-Piece* BuildAction::getPiece()
+Piece* ExpandBuildAction::getPiece()
 {
     return nullptr == builder ? nullptr : builder->getPiece();
 }
 
-PieceType BuildAction::getPieceType() const
+PieceType ExpandBuildAction::getPieceType() const
+{
+    return menuItem->getPiece()->getType();
+}
+
+ConsumeBuildAction::ConsumeBuildAction(BoardTile* builder, MenuTile* menuItem) :
+    Action(ActionType::ConsumeBuild), builder(builder), menuItem(menuItem)
+{
+}
+
+bool ConsumeBuildAction::valid(Player const& player) const
+{
+    auto builderPiece = nullptr != builder ? builder->getPiece() : nullptr;
+    auto piece = nullptr != menuItem ? menuItem->getPiece() : nullptr;
+    return builderPiece != nullptr &&
+        piece != nullptr &&
+        builderPiece->isPlayer(player) &&
+        builderPiece->validBuild(piece->getType()) &&
+        player.affords(piece);
+}
+
+Piece* ConsumeBuildAction::getPiece()
+{
+    return nullptr == builder ? nullptr : builder->getPiece();
+}
+
+PieceType ConsumeBuildAction::getPieceType() const
 {
     return menuItem->getPiece()->getType();
 }

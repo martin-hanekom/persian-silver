@@ -14,7 +14,26 @@ class Player;
 enum class PieceType
 {
     Man,
-    City
+    Soldier,
+    Spearman,
+    Archer,
+    Knight,
+    HorseArcher,
+    Cannon,
+    City,
+    Farm,
+    Mine,
+    Windmill,
+    Market,
+    Fort,
+    Stables,
+    Blacksmith,
+};
+
+enum class BuildType
+{
+    Expand,
+    Consume,
 };
 
 class PieceCost
@@ -29,6 +48,9 @@ public:
     int food;
     int goldTax;
     int foodTax;
+
+    std::string goldText() const;
+    std::string foodText() const;
 };
 
 class Piece
@@ -51,25 +73,41 @@ public:
     std::string const& getName() const;
     void setSize(float width);
     virtual PieceType getType() const = 0;
+    virtual BuildType getBuildType() const = 0;
     PieceCost getCost() const;
 
     virtual bool validMove(BoardTile* location) const;
     virtual void move(BoardTile* location);
-    bool validBuild(PieceType type, BoardTile* location) const;
-    void build(PieceType type, BoardTile* location);
+    virtual bool validBuild(PieceType type, BoardTile* location = nullptr) const = 0;
     virtual void reset();
     void setEnergy(bool up);
     bool hasEnergy() const;
     virtual std::set<PieceType> buildable() const = 0;
 
-    static constexpr PieceType pieces[]{PieceType::Man, PieceType::City};
-    static constexpr size_t numPieces{2u};
+    static constexpr PieceType pieces[]{
+        PieceType::Man,
+        PieceType::Soldier,
+        PieceType::Spearman,
+        PieceType::Archer,
+        PieceType::Knight,
+        PieceType::HorseArcher,
+        PieceType::Cannon,
+        PieceType::City,
+        PieceType::Farm,
+        PieceType::Mine,
+        PieceType::Windmill,
+        PieceType::Market,
+        PieceType::Fort,
+        PieceType::Stables,
+        PieceType::Blacksmith,
+    };
+    static constexpr size_t numPieces{15u};
 
 protected:
     PieceType type;
     sf::Sprite sprite;
-    Player* player;
-    Tile* tile;
+    Player* player = nullptr;
+    Tile* tile = nullptr;
     bool energy = true;
 };
 

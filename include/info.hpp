@@ -31,6 +31,7 @@ public:
     static constexpr float glyphDiameter = 2.f * glyphRadius;
     static constexpr sf::Vector2f padding{10.f, 10.f};
     static constexpr float height = iconDiameter + 2.f * padding.y + 2.f * (glyphDiameter + padding.y);
+    static constexpr size_t textSize = 20u;
 
 private:
     sf::CircleShape icon{iconRadius, iconSides};
@@ -38,9 +39,7 @@ private:
     Glyph goldTile;
     Glyph foodTile;
     sf::Text gold{Asset::getFont(), ""};
-    sf::Text goldTax{Asset::getFont(), ""};
     sf::Text food{Asset::getFont(), ""};
-    sf::Text foodTax{Asset::getFont(), ""};
 };
 
 class PieceInfo : public Rectangle
@@ -84,7 +83,7 @@ public:
     bool onLeftClick();
     bool onRightClick();
 
-    static constexpr sf::Vector2f panelSize{220.f, Screen::windowSize.y};
+    static constexpr sf::Vector2f panelSize{240.f, Screen::windowSize.y};
     static constexpr sf::Vector2f padding{10.f, 10.f};
     static constexpr sf::Color panelColor{76, 88, 91};
     static constexpr sf::Color panelOutline{sf::Color::Black};

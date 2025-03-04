@@ -35,7 +35,8 @@ public:
     static void submit(BoardSelectAction&& action);
     static void submit(MenuSelectAction&& action);
     static void submit(MoveAction&& action);
-    static void submit(BuildAction&& action);
+    static void submit(ExpandBuildAction&& action);
+    static void submit(ConsumeBuildAction&& action);
 
     static void nextPlayerCallback();
     void nextPlayer();

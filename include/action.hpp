@@ -13,7 +13,8 @@ enum class ActionType
     MenuSelect,
     Move,
     Fight,
-    Build
+    ExpandBuild,
+    ConsumeBuild,
 };
 
 class Action
@@ -61,10 +62,10 @@ public:
     BoardTile* to;
 };
 
-class BuildAction : public Action
+class ExpandBuildAction : public Action
 {
 public:
-    BuildAction(BoardTile* builder, MenuTile* menuTile, BoardTile* location);
+    ExpandBuildAction(BoardTile* builder, MenuTile* menuTile, BoardTile* location);
 
     bool valid(Player const& player) const override;
     Piece* getPiece() override;
@@ -73,6 +74,19 @@ public:
     BoardTile* builder;
     MenuTile* menuItem;
     BoardTile* location;
+};
+
+class ConsumeBuildAction : public Action
+{
+public:
+    ConsumeBuildAction(BoardTile* builder, MenuTile* menuTile);
+
+    bool valid(Player const& player) const override;
+    Piece* getPiece() override;
+    PieceType getPieceType() const;
+
+    BoardTile* builder;
+    MenuTile* menuItem;
 };
 
 }

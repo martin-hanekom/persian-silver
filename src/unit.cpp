@@ -6,6 +6,11 @@
 namespace silver
 {
 
+BuildType Unit::getBuildType() const
+{
+    return BuildType::Consume;
+}
+
 bool Unit::validMove(BoardTile* newTile) const
 {
     return energy &&
@@ -23,6 +28,11 @@ void Unit::move(BoardTile* newTile)
     setEnergy(false);
 }
 
+bool Unit::validBuild(PieceType type, BoardTile* location) const
+{
+    return energy && buildable().count(type);
+}
+
 Man::Man(Player* player)
     : Unit(PieceType::Man, player)
 {
@@ -30,7 +40,13 @@ Man::Man(Player* player)
 
 std::set<PieceType> Man::buildable() const
 {
-    return {PieceType::City};
+    std::set<PieceType> pieces{PieceType::City};
+    if (player->hasPiece(PieceType::City))
+    {
+        pieces.insert(PieceType::Fort);
+    }
+
+    return pieces;
 }
 
 PieceType Man::getType() const

@@ -22,7 +22,7 @@ public:
     virtual sf::Vector2f getPosition() const = 0;
     virtual float getPieceWidth() const = 0;
 
-    static constexpr float pieceFillRatio = 0.7f;
+    static constexpr float pieceFillRatio = 0.65f;
 
 protected:
     Piece* piece = nullptr;
@@ -37,7 +37,7 @@ public:
     void setNeighbor(size_t index, BoardTile* other);
     BoardTile* getNeighbor(size_t index);
     bool hasNeighbor(size_t index) const;
-    bool isNeighbor(BoardTile const* other) const;
+    bool isNeighbor(BoardTile const* other, size_t range = 1u) const;
     sf::Vector2f getNeigborPosition(size_t index) const;
 
     sf::Vector2f getPosition() const override;
@@ -107,7 +107,7 @@ public:
     void onSelect();
     void offSelect();
 
-    static constexpr float tileSize = 90.f;
+    static constexpr float tileSize = 80.f;
     static constexpr float tileHalfSize = tileSize / 2.f;
     static constexpr sf::Color tileColor{80, 92, 95};
     static constexpr sf::Color defaultHoverColor{85, 97, 100};
@@ -115,14 +115,13 @@ public:
     static constexpr float glyphRadius = 20.f;
     static constexpr float glyphDiameter = 20.f;
     static constexpr sf::Vector2f padding{10.f, 2.f};
+    static constexpr size_t textSize = 20u;
 
 protected:
     Glyph goldTile;
     Glyph foodTile;
-    sf::Text goldBuild{Asset::getFont(), ""};
-    sf::Text goldTax{Asset::getFont(), ""};
-    sf::Text foodBuild{Asset::getFont(), ""};
-    sf::Text foodTax{Asset::getFont(), ""};
+    sf::Text gold{Asset::getFont(), ""};
+    sf::Text food{Asset::getFont(), ""};
     bool selected = false;
 };
 

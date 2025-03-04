@@ -24,11 +24,15 @@ public:
     PieceCost const getResources() const;
     bool affords(Piece* piece) const;
     Piece* buy(PieceType type, Tile* tile);
+    void expand(PieceType type, Piece* builder, BoardTile* location);
+    void consume(PieceType type, Piece* builder); 
+    bool hasPiece(PieceType type) const;
 
     static constexpr size_t maxPlayers = 6u;
     static constexpr size_t minPlayers = 2u;
-    static constexpr int startGold = 10;
-    static constexpr int startFood = 10;
+    static constexpr int startGold = 20;
+    static constexpr int startFood = 20;
+    static constexpr size_t maxPieces = 255u;
 
     static constexpr sf::Color playerColors[maxPlayers] = {
         sf::Color(0, 0, 128, 255),
@@ -37,6 +41,9 @@ public:
     };
 
 protected:
+    Piece* add(PieceType type, Tile* tile);
+    void remove(Piece* piece);
+
     std::string name;
     size_t index;
     sf::Color color;

@@ -10,6 +10,18 @@
 namespace silver
 {
 
+std::string PieceCost::goldText() const
+{
+    std::string const goldSign = goldTax < 0 ? "-" : "+";
+    return std::to_string(gold) + " (" + goldSign + std::to_string(goldTax) + ")";
+}
+
+std::string PieceCost::foodText() const
+{
+    std::string const foodSign = foodTax < 0 ? "-" : "+";
+    return std::to_string(food) + " (" + foodSign + std::to_string(foodTax) + ")";
+}
+
 Piece::Piece(PieceType type, Player* player)
     : type(type), sprite(Asset::getTexture(Piece::name(type))), player(player)
 {
@@ -34,6 +46,10 @@ Piece* Piece::create(PieceType pieceType, Player* player)
             return new Man(player);
         case PieceType::City:
             return new City(player);
+        case PieceType::Farm:
+            return new Farm(player);
+        case PieceType::Mine:
+            return new Mine(player);
         default:
             return nullptr;
     }
@@ -43,7 +59,9 @@ std::string const& Piece::name(PieceType type)
 {
     static std::unordered_map<PieceType, std::string> const pieceMap = {
         {PieceType::Man, "man"},
-        {PieceType::City, "city"}
+        {PieceType::City, "city"},
+        {PieceType::Farm, "farm"},
+        {PieceType::Mine, "mine"}
     };
 
     return pieceMap.at(type);
@@ -54,6 +72,8 @@ PieceCost Piece::cost(PieceType type)
     static std::unordered_map<PieceType, PieceCost> const pieceMap = {
         {PieceType::Man, Man::cost},
         {PieceType::City, City::cost},
+        {PieceType::Farm, Farm::cost},
+        {PieceType::Mine, Mine::cost},
     };
 
     return pieceMap.at(type);
@@ -71,6 +91,11 @@ Player* Piece::getPlayer()
 
 void Piece::setTile(Tile* newTile)
 {
+    if (nullptr != tile)
+    {
+        tile->setPiece(nullptr);
+    }
+
     tile = newTile;
     if (nullptr != tile)
     {
@@ -116,22 +141,6 @@ bool Piece::validMove(BoardTile* location) const
 
 void Piece::move(BoardTile* location)
 {
-}
-
-bool Piece::validBuild(PieceType type, BoardTile* location) const
-{
-    return energy &&
-        nullptr != location &&
-        !location->hasPiece() &&
-        buildable().count(type) &&
-        static_cast<BoardTile*>(tile)->isNeighbor(location);
-}
-
-void Piece::build(PieceType type, BoardTile* location)
-{
-    auto piece = player->buy(type, location);
-    setEnergy(false);
-    piece->setEnergy(false);
 }
 
 void Piece::reset()

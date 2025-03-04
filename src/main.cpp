@@ -5,11 +5,17 @@
 
 int convertPic(std::string const& name);
 
-int main()
+int main(int argc, char** argv)
 {
     std::srand(std::time({}));
-    silver::Game::get().run(3u);
-    //convertPic("spearman");
+    if (argc > 1)
+    {
+        convertPic(argv[1]);
+    }
+    else
+    {
+        silver::Game::get().run(3u);
+    }
     return 0;
 }
 

@@ -76,9 +76,27 @@ bool BoardTile::hasNeighbor(size_t index) const
     return neighbors[index] != nullptr;
 }
 
-bool BoardTile::isNeighbor(BoardTile const* other) const
+bool BoardTile::isNeighbor(BoardTile const* other, size_t range) const
 {
-    return std::find(neighbors.cbegin(), neighbors.cend(), other) != neighbors.cend();
+    if (std::count(neighbors.cbegin(), neighbors.cend(), other))
+    {
+        return true;
+    }
+
+    if (range < 2)
+    {
+        return false;
+    }
+
+    for (auto const neighbor : neighbors)
+    {
+        if (neighbor->isNeighbor(other, range-1))
+        {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 sf::Vector2f BoardTile::getNeigborPosition(size_t index) const
@@ -166,10 +184,10 @@ MenuTile::MenuTile(sf::Vector2f pos) :
 
     goldTile.setResource(Resource::create(ResourceType::Gold));
     foodTile.setResource(Resource::create(ResourceType::Food));
-    goldBuild.setFillColor(sf::Color::Black);
-    foodBuild.setFillColor(sf::Color::Black);
-    goldTax.setFillColor(sf::Color::Black);
-    foodTax.setFillColor(sf::Color::Black);
+    gold.setFillColor(sf::Color::Black);
+    gold.setCharacterSize(textSize);
+    food.setFillColor(sf::Color::Black);
+    food.setCharacterSize(textSize);
 }
 
 sf::Vector2f MenuTile::getPosition() const
@@ -189,10 +207,8 @@ void MenuTile::setPiece(Piece* piece)
     if (nullptr != piece)
     {
         auto const& cost = piece->getCost();
-        goldBuild.setString(std::to_string(cost.gold));
-        foodBuild.setString(std::to_string(cost.food));
-        goldTax.setString("(" + std::to_string(cost.gold) + ")");
-        foodTax.setString("(" + std::to_string(cost.foodTax) + ")");
+        gold.setString(cost.goldText());
+        food.setString(cost.foodText());
     }
 }
 
@@ -204,8 +220,8 @@ void MenuTile::draw() const
         piece->draw();
         goldTile.draw();
         foodTile.draw();
-        Screen::draw(goldBuild);
-        Screen::draw(foodBuild);
+        Screen::draw(gold);
+        Screen::draw(food);
         //Screen::draw(goldTax);
         //Screen::draw(foodTax);
     }
@@ -259,8 +275,8 @@ void MenuTile::setPosition(sf::Vector2f pos)
     Rectangle::setPosition(pos);
     goldTile.setPosition(pos + sf::Vector2f{tileHalfSize + glyphRadius + padding.x, -glyphRadius - padding.y});
     foodTile.setPosition(pos + sf::Vector2f{tileHalfSize + glyphRadius + padding.x, glyphRadius + padding.y});
-    goldBuild.setPosition(goldTile.getPosition() + sf::Vector2f{glyphRadius + padding.x, -glyphRadius});
-    foodBuild.setPosition(foodTile.getPosition() + sf::Vector2f{glyphRadius + padding.x, -glyphRadius});
+    gold.setPosition(goldTile.getPosition() + sf::Vector2f{glyphRadius + padding.x, -glyphRadius});
+    food.setPosition(foodTile.getPosition() + sf::Vector2f{glyphRadius + padding.x, -glyphRadius});
 }
 
 Glyph::Glyph(sf::Vector2f pos, float radius) : Circle(pos, radius, tileSides, true)

@@ -97,7 +97,7 @@ bool Board::onRightClick()
         {
             if (nullptr != menuSelected)
             {
-                Game::submit(BuildAction(selected, menuSelected, hovering));
+                Game::submit(ExpandBuildAction(selected, menuSelected, hovering));
                 menuSelected->offSelect();
                 menuSelected = nullptr;
             }

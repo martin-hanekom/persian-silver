@@ -1,4 +1,3 @@
-#include <iostream>
 #include "info.hpp"
 #include "screen.hpp"
 #include "game.hpp"
@@ -24,13 +23,11 @@ PlayerInfo::PlayerInfo(sf::Vector2f pos, float width) :
 
     gold.setPosition(goldTile.getPosition() + sf::Vector2f{glyphRadius + padding.x, -glyphRadius});
     gold.setFillColor(sf::Color::Black);
-    goldTax.setPosition(goldTile.getPosition() + sf::Vector2f{glyphRadius + padding.x + 50.f, -glyphRadius});
-    goldTax.setFillColor(sf::Color::Black);
+    gold.setCharacterSize(textSize);
 
     food.setPosition(foodTile.getPosition() + sf::Vector2f{glyphRadius + padding.x, -glyphRadius});
     food.setFillColor(sf::Color::Black);
-    foodTax.setPosition(foodTile.getPosition() + sf::Vector2f{glyphRadius + padding.x + 50.f, -glyphRadius});
-    foodTax.setFillColor(sf::Color::Black);
+    food.setCharacterSize(textSize);
 }
 
 void PlayerInfo::setPlayer(Player const& player)
@@ -39,10 +36,8 @@ void PlayerInfo::setPlayer(Player const& player)
     playerName.setString(player.getName());
 
     auto const& resources = player.getResources();
-    gold.setString(std::to_string(resources.gold));
-    goldTax.setString(std::to_string(resources.goldTax));
-    food.setString(std::to_string(resources.food));
-    foodTax.setString(std::to_string(resources.foodTax));
+    gold.setString(resources.goldText());
+    food.setString(resources.foodText());
 }
 
 void PlayerInfo::draw() const
@@ -52,9 +47,7 @@ void PlayerInfo::draw() const
     goldTile.draw();
     foodTile.draw();
     Screen::draw(gold);
-    Screen::draw(goldTax);
     Screen::draw(food);
-    Screen::draw(foodTax);
 }
 
 PieceInfo::PieceInfo(sf::Vector2f pos, float width) :
